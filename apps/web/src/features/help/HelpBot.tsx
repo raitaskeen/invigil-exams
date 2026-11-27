@@ -23,44 +23,44 @@ interface Msg {
  */
 export function BotFace({ className, animated = true }: { className?: string; animated?: boolean }) {
   return (
-    <svg viewBox="0 0 96 96" className={cn(animated && "bot-float", className)} aria-hidden="true">
+    <svg viewBox="5 1 86 94" className={cn(animated && "bot-float", className)} aria-hidden="true">
       <defs>
         <radialGradient id="invi-shell" cx="34%" cy="26%" r="85%">
           <stop offset="0" stopColor="#ffffff" />
-          <stop offset=".38" stopColor="#eef2ff" />
-          <stop offset=".78" stopColor="#b9c6fb" />
-          <stop offset="1" stopColor="#7f8fe6" />
+          <stop offset=".38" style={{ stopColor: "oklch(0.97 calc(var(--brand-c) * 0.12) var(--brand-h))" }} />
+          <stop offset=".78" style={{ stopColor: "oklch(0.86 calc(var(--brand-c) * 0.45) var(--brand-h))" }} />
+          <stop offset="1" style={{ stopColor: "oklch(0.66 calc(var(--brand-c) * 0.85) var(--brand-h))" }} />
         </radialGradient>
         <linearGradient id="invi-rim" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#ffffff" stopOpacity=".95" />
-          <stop offset=".5" stopColor="#a5b4fc" stopOpacity=".2" />
-          <stop offset="1" stopColor="#6366f1" stopOpacity=".9" />
+          <stop offset=".5" style={{ stopColor: "oklch(0.8 calc(var(--brand-c) * 0.6) var(--brand-h))" }} stopOpacity=".2" />
+          <stop offset="1" style={{ stopColor: "oklch(0.55 var(--brand-c) var(--brand-h))" }} stopOpacity=".9" />
         </linearGradient>
         <linearGradient id="invi-visor" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#1e2a6e" />
-          <stop offset=".55" stopColor="#0c1238" />
-          <stop offset="1" stopColor="#060a24" />
+          <stop offset="0" style={{ stopColor: "oklch(0.3 calc(var(--brand-c) * 0.7) var(--brand-h))" }} />
+          <stop offset=".55" style={{ stopColor: "oklch(0.18 calc(var(--brand-c) * 0.5) var(--brand-h))" }} />
+          <stop offset="1" style={{ stopColor: "oklch(0.13 calc(var(--brand-c) * 0.4) var(--brand-h))" }} />
         </linearGradient>
         <radialGradient id="invi-eye" cx="50%" cy="40%" r="60%">
-          <stop offset="0" stopColor="#ecfeff" />
-          <stop offset=".45" stopColor="#67e8f9" />
-          <stop offset="1" stopColor="#0ea5e9" />
+          <stop offset="0" style={{ stopColor: "oklch(0.99 0.02 var(--brand-h))" }} />
+          <stop offset=".45" style={{ stopColor: "oklch(0.86 calc(var(--brand-c) * 0.7) calc(var(--brand-h) - 40))" }} />
+          <stop offset="1" style={{ stopColor: "oklch(0.68 var(--brand-c) calc(var(--brand-h) - 30))" }} />
         </radialGradient>
         <radialGradient id="invi-beacon" cx="40%" cy="35%" r="65%">
-          <stop offset="0" stopColor="#fdf4ff" />
-          <stop offset=".5" stopColor="#c084fc" />
-          <stop offset="1" stopColor="#7c3aed" />
+          <stop offset="0" style={{ stopColor: "oklch(0.98 0.02 var(--brand-h))" }} />
+          <stop offset=".5" style={{ stopColor: "oklch(0.78 calc(var(--brand-c) * 0.8) var(--brand-h))" }} />
+          <stop offset="1" style={{ stopColor: "oklch(0.52 var(--brand-c) var(--brand-h))" }} />
         </radialGradient>
         <linearGradient id="invi-ear" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#c7d2fe" />
-          <stop offset="1" stopColor="#6366f1" />
+          <stop offset="0" style={{ stopColor: "oklch(0.88 calc(var(--brand-c) * 0.4) var(--brand-h))" }} />
+          <stop offset="1" style={{ stopColor: "oklch(0.55 var(--brand-c) var(--brand-h))" }} />
         </linearGradient>
         <filter id="invi-glow" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="2.2" result="b" />
           <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
       </defs>
-      <ellipse cx="48" cy="89" rx="22" ry="3.4" fill="#1e1b4b" opacity=".22" />
+      <ellipse cx="48" cy="89" rx="22" ry="3.4" style={{ fill: "oklch(0.25 0.05 var(--brand-h))" }} opacity=".22" />
       <path d="M48 20v-8" stroke="url(#invi-ear)" strokeWidth="3" strokeLinecap="round" />
       <circle className="bot-beacon" cx="48" cy="9" r="5" fill="url(#invi-beacon)" filter="url(#invi-glow)" />
       <rect x="8" y="40" width="10" height="22" rx="5" fill="url(#invi-ear)" />
@@ -68,16 +68,16 @@ export function BotFace({ className, animated = true }: { className?: string; an
       <rect x="14" y="20" width="68" height="62" rx="26" fill="url(#invi-shell)" />
       <rect x="14.75" y="20.75" width="66.5" height="60.5" rx="25.3" fill="none" stroke="url(#invi-rim)" strokeWidth="1.5" />
       <rect x="22" y="32" width="52" height="34" rx="17" fill="url(#invi-visor)" />
-      <rect x="22.5" y="32.5" width="51" height="33" rx="16.5" fill="none" stroke="#818cf8" strokeOpacity=".55" />
+      <rect x="22.5" y="32.5" width="51" height="33" rx="16.5" fill="none" style={{ stroke: "oklch(0.7 calc(var(--brand-c) * 0.8) var(--brand-h))" }} strokeOpacity=".55" />
       <g filter="url(#invi-glow)">
         <rect className="bot-eye" x="33" y="41" width="9" height="12" rx="4.5" fill="url(#invi-eye)" />
         <rect className="bot-eye" x="54" y="41" width="9" height="12" rx="4.5" fill="url(#invi-eye)" />
       </g>
-      <path d="M40.5 58.5q7.5 4 15 0" fill="none" stroke="#67e8f9" strokeWidth="2.4" strokeLinecap="round" opacity=".9" />
+      <path d="M40.5 58.5q7.5 4 15 0" fill="none" style={{ stroke: "oklch(0.86 calc(var(--brand-c) * 0.7) calc(var(--brand-h) - 40))" }} strokeWidth="2.4" strokeLinecap="round" opacity=".9" />
       <path d="M27 37c4-3 10-4.5 16-4.5" fill="none" stroke="#fff" strokeOpacity=".35" strokeWidth="2.5" strokeLinecap="round" />
       <ellipse cx="33" cy="26.5" rx="11" ry="3.6" fill="#fff" opacity=".85" />
-      <circle cx="25" cy="70" r="3" fill="#f0abfc" opacity=".45" />
-      <circle cx="71" cy="70" r="3" fill="#f0abfc" opacity=".45" />
+      <circle cx="25" cy="70" r="3" style={{ fill: "oklch(0.85 calc(var(--brand-c) * 0.5) calc(var(--brand-h) + 60))" }} opacity=".45" />
+      <circle cx="71" cy="70" r="3" style={{ fill: "oklch(0.85 calc(var(--brand-c) * 0.5) calc(var(--brand-h) + 60))" }} opacity=".45" />
     </svg>
   );
 }
@@ -156,7 +156,7 @@ export function HelpBot() {
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="fixed inset-x-3 bottom-24 z-40 flex max-h-[min(36rem,calc(100dvh-8rem))] flex-col overflow-hidden rounded-[1.5rem] border border-border-strong bg-popover shadow-2xl sm:inset-x-auto sm:end-5 sm:w-[23rem]"
           >
-            <header className="flex items-center gap-3 bg-gradient-to-br from-primary to-[oklch(0.45_0.2_275)] px-4 py-3 text-primary-foreground">
+            <header className="flex items-center gap-3 bot-header px-4 py-3 text-primary-foreground">
               <span className="grid size-11 place-items-center rounded-2xl bg-white/90 shadow-inner">
                 <BotFace className="size-9" animated={false} />
               </span>
@@ -249,8 +249,8 @@ export function HelpBot() {
         className="bot-launcher group fixed end-4 bottom-4 z-40 grid size-[4.25rem] place-items-center rounded-full transition-transform duration-300 ease-[var(--ease-out)] hover:scale-[1.06] active:scale-95 sm:end-6 sm:bottom-6"
       >
         <span className="bot-ring absolute inset-0 rounded-full" aria-hidden="true" />
-        <span className="absolute inset-[3px] rounded-full bg-[radial-gradient(circle_at_30%_25%,#ffffff,#e0e7ff_55%,#c7d2fe)] shadow-[inset_0_-6px_14px_rgba(99,102,241,.35),0_14px_34px_-10px_rgba(79,70,229,.65)] dark:bg-[radial-gradient(circle_at_30%_25%,#3b4285,#1e2353_60%,#11143a)]" aria-hidden="true" />
-        {open ? <X weight="bold" className="relative size-6 text-indigo-600 dark:text-indigo-200" /> : <BotFace className="relative size-[3.1rem]" />}
+        <span className="absolute inset-[3px] rounded-full bot-core" aria-hidden="true" />
+        {open ? <X weight="bold" className="relative size-6 text-primary" /> : <BotFace className="relative size-[3.4rem]" />}
         {!open && <span className="absolute end-0.5 top-0.5 flex size-3.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-success/60" /><span className="relative inline-flex size-3.5 rounded-full bg-success ring-2 ring-background" /></span>}
       </button>
     </>

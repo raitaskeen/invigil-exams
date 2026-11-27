@@ -34,13 +34,13 @@ function Glass({ children, className }: { children: ReactNode; className?: strin
   return <div className={cn("rounded-2xl border border-white/20 bg-white/80 p-4 text-[oklch(0.2_0.02_262)] shadow-xl backdrop-blur-xl dark:bg-[oklch(0.2_0.02_262/0.8)] dark:text-white", className)}>{children}</div>;
 }
 
-// ---- Live demo 1: a connection that drops and recovers -----------------------------------------------------
-const NET = [
-  { icon: CloudCheck, text: "All answers saved", cls: "bg-success-soft text-success", saved: 4 },
-  { icon: CloudSlash, text: "Offline · 2 answers kept on this device", cls: "bg-warning-soft text-warning", saved: 4 },
-  { icon: ArrowsClockwise, text: "Back online · syncing", cls: "bg-brand-soft text-brand-ink", saved: 5 },
-  { icon: CloudCheck, text: "All 6 answers saved", cls: "bg-success-soft text-success", saved: 6 },
-] as const;
+// ---- Live demo 1: drop the connection yourself -------------------------------------------------------------
+type Net = "online" | "offline" | "syncing";
+const NET: Record<Net, { icon: typeof CloudCheck; cls: string }> = {
+  online: { icon: CloudCheck, cls: "bg-success-soft text-success" },
+  offline: { icon: CloudSlash, cls: "bg-warning-soft text-warning" },
+  syncing: { icon: ArrowsClockwise, cls: "bg-brand-soft text-brand-ink" },
+};
 
 function useCycle(n: number, ms: number) {
   const reduce = useReducedMotion();
@@ -53,25 +53,60 @@ function useCycle(n: number, ms: number) {
   return i;
 }
 
+/** Interactive: press the button, watch answers queue on the device, then sync when the connection returns. */
 function NetworkDemo() {
-  const i = useCycle(NET.length, 2200);
-  const s = NET[i]!;
+  const [net, setNet] = useState<Net>("online");
+  const [saved, setSaved] = useState(3);
+  const [queued, setQueued] = useState(0);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+  const later = (ms: number, fn: () => void) => timers.current.push(setTimeout(fn, ms));
+
+  function drop() {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+    setNet("offline");
+    setSaved(3);
+    setQueued(0);
+    later(700, () => setQueued(1));
+    later(1400, () => setQueued(2));
+    later(2600, () => setNet("syncing"));
+    later(3600, () => {
+      setNet("online");
+      setSaved(5);
+      setQueued(0);
+    });
+  }
+
+  const s = NET[net];
+  const text = net === "online" ? "All answers saved" : net === "offline" ? `Offline · ${queued} answer${queued === 1 ? "" : "s"} kept on this device` : "Back online · syncing";
   return (
     <Glass>
       <div className="flex items-center justify-between gap-3">
         <AnimatePresence mode="popLayout" initial={false}>
-          <motion.span key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35, ease: EASE }} className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold", s.cls)}>
-            <s.icon weight="bold" className={cn("size-3.5", i === 2 && "animate-spin")} aria-hidden="true" /> {s.text}
+          <motion.span key={net + queued} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3, ease: EASE }} className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold", s.cls)} role="status">
+            <s.icon weight="bold" className={cn("size-3.5", net === "syncing" && "animate-spin")} aria-hidden="true" /> {text}
           </motion.span>
         </AnimatePresence>
-        {i === 1 ? <CloudSlash className="size-5 text-warning" aria-hidden="true" /> : <WifiHigh className="size-5 text-success" aria-hidden="true" />}
+        <button
+          type="button"
+          onClick={drop}
+          disabled={net !== "online"}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[oklch(0.2_0.02_262)] px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40 dark:bg-white dark:text-[oklch(0.2_0.02_262)]"
+        >
+          {net === "offline" ? <CloudSlash className="size-3.5" aria-hidden="true" /> : <WifiHigh className="size-3.5" aria-hidden="true" />} Drop the connection
+        </button>
       </div>
       <div className="mt-3 grid grid-cols-6 gap-1.5" aria-hidden="true">
-        {Array.from({ length: 6 }, (_, q) => (
-          <div key={q} className="h-1.5 overflow-hidden rounded-full bg-black/10 dark:bg-white/15">
-            <motion.div className={cn("h-full rounded-full", q < s.saved ? "bg-success" : i === 1 && q < 6 && q >= 4 ? "bg-warning" : "bg-transparent")} initial={false} animate={{ width: q < s.saved || (i === 1 && q >= 4) ? "100%" : "0%" }} transition={{ duration: 0.5, ease: EASE }} />
-          </div>
-        ))}
+        {Array.from({ length: 6 }, (_, q) => {
+          const isSaved = q < saved;
+          const isQueued = !isSaved && q < saved + queued;
+          return (
+            <div key={q} className="h-1.5 overflow-hidden rounded-full bg-black/10 dark:bg-white/15">
+              <motion.div className={cn("h-full rounded-full", isSaved ? "bg-success" : "bg-warning")} initial={false} animate={{ width: isSaved || isQueued ? "100%" : "0%" }} transition={{ duration: 0.45, ease: EASE }} />
+            </div>
+          );
+        })}
       </div>
     </Glass>
   );
