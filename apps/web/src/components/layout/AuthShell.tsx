@@ -33,11 +33,11 @@ const PROMISES = [
 export function AuthShell({ title, description, footer, children, backdrop }: AuthShellProps) {
   const src = backdrop?.src ?? DEFAULT_BACKDROP;
   return (
-    <div className="relative isolate flex min-h-dvh flex-col overflow-hidden bg-[oklch(0.16_0.03_262)] px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-6 sm:px-6">
+    <div className="relative isolate flex min-h-dvh flex-col overflow-hidden bg-[oklch(0.16_0.03_var(--brand-h))] px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-6 sm:px-6">
       <div className="absolute inset-0 -z-10" aria-hidden="true">
         <img src={src} alt="" decoding="async" fetchPriority="high" className="auth-kenburns size-full object-cover opacity-0 [animation-fill-mode:both]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.16_0.04_262/0.45),oklch(0.12_0.03_262/0.88)_75%)]" />
-        <div className="auth-orb absolute -top-32 -left-24 size-[28rem] rounded-full bg-[oklch(0.55_0.2_262/0.35)] blur-3xl" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.16_0.04_var(--brand-h)/0.45),oklch(0.12_0.03_var(--brand-h)/0.88)_75%)]" />
+        <div className="auth-orb absolute -top-32 -left-24 size-[28rem] rounded-full bg-[oklch(0.55_0.2_var(--brand-h)/0.35)] blur-3xl" />
         <div className="auth-orb absolute -right-24 -bottom-40 size-[30rem] rounded-full bg-[oklch(0.6_0.17_200/0.25)] blur-3xl [animation-delay:-6s]" />
       </div>
 
@@ -56,7 +56,7 @@ export function AuthShell({ title, description, footer, children, backdrop }: Au
 
       <main id="main" className="flex flex-1 items-center justify-center py-8">
         <div className="w-full max-w-[28rem] animate-[rise_600ms_var(--ease-out)_backwards]">
-          <div className="rounded-[1.75rem] border border-white/20 bg-background/[0.93] p-6 shadow-[0_30px_80px_-20px_oklch(0.1_0.05_262/0.7)] backdrop-blur-2xl sm:p-9">
+          <div className="rounded-[1.75rem] border border-white/20 bg-background/[0.93] p-6 shadow-[0_30px_80px_-20px_oklch(0.1_0.05_var(--brand-h)/0.7)] backdrop-blur-2xl sm:p-9">
             <h1 className="text-[1.875rem] leading-tight font-semibold tracking-[-0.04em]">{title}</h1>
             <p className="mt-1.5 text-foreground-soft">{description}</p>
             <div className="mt-7">{children}</div>

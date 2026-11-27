@@ -21,7 +21,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
         {children}
       </main>
       {/* Always dark, in both themes: a clear, high-contrast end to the page. */}
-      <footer className="bg-[oklch(0.17_0.02_260)] text-[oklch(0.96_0.005_260)]">
+      <footer className="bg-[oklch(0.17_0.02_var(--brand-h))] text-[oklch(0.96_0.005_var(--brand-h))]">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
           <div className="space-y-4">
             <Link href="/" className="inline-block rounded-md [&_*]:text-current" aria-label={`${siteConfig.productName} home`}>

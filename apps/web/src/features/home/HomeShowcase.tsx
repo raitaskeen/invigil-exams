@@ -21,17 +21,17 @@ function Stage({ photo, alt, children, flip }: { photo: string; alt: string; chi
       whileInView={{ opacity: 1, y: 0, rotate: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.9, ease: EASE }}
-      className="relative aspect-[5/4] overflow-hidden rounded-[2rem] bg-muted shadow-[0_40px_80px_-40px_oklch(0.25_0.08_262/0.55)]"
+      className="relative aspect-[5/4] overflow-hidden rounded-[2rem] bg-muted shadow-[0_40px_80px_-40px_oklch(0.25_0.08_var(--brand-h)/0.55)]"
     >
       <motion.img style={{ y, scale: 1.14 }} src={img(photo, 1200)} srcSet={`${img(photo, 700)} 700w, ${img(photo, 1200)} 1200w`} sizes="(min-width: 1024px) 50vw, 100vw" alt={alt} loading="lazy" decoding="async" className="absolute inset-0 size-full object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.15_0.03_262/0.75)] via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.15_0.03_var(--brand-h)/0.75)] via-transparent to-transparent" />
       <div className="absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6">{children}</div>
     </motion.div>
   );
 }
 
 function Glass({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn("rounded-2xl border border-white/20 bg-white/80 p-4 text-[oklch(0.2_0.02_262)] shadow-xl backdrop-blur-xl dark:bg-[oklch(0.2_0.02_262/0.8)] dark:text-white", className)}>{children}</div>;
+  return <div className={cn("rounded-2xl border border-white/20 bg-white/80 p-4 text-[oklch(0.2_0.02_var(--brand-h))] shadow-xl backdrop-blur-xl dark:bg-[oklch(0.2_0.02_var(--brand-h)/0.8)] dark:text-white", className)}>{children}</div>;
 }
 
 // ---- Live demo 1: drop the connection yourself -------------------------------------------------------------
@@ -92,7 +92,7 @@ function NetworkDemo() {
           type="button"
           onClick={drop}
           disabled={net !== "online"}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[oklch(0.2_0.02_262)] px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40 dark:bg-white dark:text-[oklch(0.2_0.02_262)]"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[oklch(0.2_0.02_var(--brand-h))] px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40 dark:bg-white dark:text-[oklch(0.2_0.02_var(--brand-h))]"
         >
           {net === "offline" ? <CloudSlash className="size-3.5" aria-hidden="true" /> : <WifiHigh className="size-3.5" aria-hidden="true" />} Drop the connection
         </button>
