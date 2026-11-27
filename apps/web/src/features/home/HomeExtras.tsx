@@ -57,7 +57,6 @@ export function HeroImagery() {
           </motion.figure>
         ))}
       </div>
-      <p className="mt-2 text-end text-[0.6875rem] text-muted-foreground">Photos: Unsplash</p>
     </div>
   );
 }
@@ -113,20 +112,14 @@ function EmblemBadge({ e, i }: { e: Emblem; i: number }) {
 
 export function EmblemMarquee() {
   return (
-    <section aria-labelledby="emblems-title" className="overflow-hidden py-12 sm:py-16">
-      <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
-        <h2 id="emblems-title" className="text-sm font-semibold tracking-wide text-muted-foreground">
-          Designed for every kind of institution that runs assessments
-        </h2>
-      </div>
-      <div className="marquee-mask mt-7">
+    <section aria-label="Institution types" className="overflow-hidden py-12 sm:py-16">
+      <div className="marquee-mask">
         <ul className="marquee-track flex w-max gap-4 px-2" aria-label="Institution types">
           {[...EMBLEMS, ...EMBLEMS].map((e, i) => (
             <EmblemBadge key={i} e={e} i={i} />
           ))}
         </ul>
       </div>
-      <p className="mt-4 text-center text-[0.6875rem] text-muted-foreground">Illustrative categories, not partner logos or endorsements.</p>
     </section>
   );
 }
@@ -177,9 +170,9 @@ export function FaqSection() {
             ))}
           </ul>
         </div>
-        <div className="divide-y divide-border rounded-[1.5rem] border border-border bg-card shadow-sm">
+        <div className="scroll-reveal divide-y divide-border rounded-[1.5rem] border border-border bg-card shadow-sm">
           {FAQ.map((f, i) => (
-            <details key={f.q} className="faq-item group px-5 sm:px-6" open={i === 0}>
+            <details key={f.q} name="faq" className="faq-item group px-5 sm:px-6" open={i === 0}>
               <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-4 text-start font-semibold outline-none focus-visible:text-primary [&::-webkit-details-marker]:hidden">
                 {f.q}
                 <CaretDown className="size-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:rotate-180" aria-hidden="true" />

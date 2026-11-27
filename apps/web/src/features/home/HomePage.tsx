@@ -88,7 +88,7 @@ function Workflow() {
           <AnimatePresence mode="wait">
             <motion.ol
               key={role}
-              className="grid gap-px overflow-hidden rounded-[1.5rem] border border-border bg-border sm:grid-cols-2"
+              className="scroll-reveal grid gap-px overflow-hidden rounded-[1.5rem] border border-border bg-border shadow-sm sm:grid-cols-2"
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -97,12 +97,12 @@ function Workflow() {
               {ROLE_FLOW[role].map((s, i) => (
                 <motion.li
                   key={s.title}
-                  className="group bg-card p-7 sm:p-9"
+                  className="group bg-card p-7 transition-colors duration-300 hover:bg-surface sm:p-9"
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, ease: EASE, delay: 0.06 * i }}
                 >
-                  <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand-ink">
+                  <span className="grid size-11 place-items-center rounded-xl text-white shadow-md transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" style={{ background: `linear-gradient(135deg, ${["oklch(0.55 0.19 258)", "oklch(0.6 0.18 290)", "oklch(0.6 0.14 200)", "oklch(0.6 0.15 155)"][i % 4]}, color-mix(in oklch, ${["oklch(0.55 0.19 258)", "oklch(0.6 0.18 290)", "oklch(0.6 0.14 200)", "oklch(0.6 0.15 155)"][i % 4]} 60%, black))` }}>
                     <s.icon weight="duotone" className="size-[1.375rem]" />
                   </span>
                   <h3 className="mt-6 text-xl font-semibold tracking-[-0.025em]">{s.title}</h3>
@@ -146,8 +146,8 @@ function Trust() {
     <section className="px-4 pb-24 sm:px-6 sm:pb-32">
       <div className="mx-auto grid max-w-6xl gap-5 lg:grid-cols-2">
         <Reveal>
-          <div className="flex h-full flex-col rounded-[1.5rem] border border-border bg-card p-7 shadow-sm sm:p-9">
-            <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand-ink"><QrCode weight="duotone" className="size-[1.375rem]" /></span>
+          <div className="scroll-reveal flex h-full flex-col rounded-[1.5rem] border border-border bg-card p-7 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-9">
+            <span className="grid size-11 place-items-center rounded-xl bg-gradient-to-br from-[oklch(0.6_0.14_200)] to-[oklch(0.42_0.12_220)] text-white shadow-md"><QrCode weight="duotone" className="size-[1.375rem]" /></span>
             <h3 className="mt-6 text-2xl font-semibold tracking-[-0.03em]">Results anyone can check</h3>
             <p className="mt-2.5 leading-relaxed text-foreground-soft">Every published result report carries a verification code and QR. An employer or another institution can confirm it is genuine, and sees only the exam, a masked name and the score.</p>
             <div className="mt-6 flex items-center gap-5 rounded-2xl bg-surface-sunken p-4">
@@ -172,8 +172,8 @@ function Trust() {
           </div>
         </Reveal>
         <Reveal delay={0.08}>
-          <div className="flex h-full flex-col rounded-[1.5rem] border border-border bg-card p-7 shadow-sm sm:p-9">
-            <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand-ink"><Gavel weight="duotone" className="size-[1.375rem]" /></span>
+          <div className="scroll-reveal flex h-full flex-col rounded-[1.5rem] border border-border bg-card p-7 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-9">
+            <span className="grid size-11 place-items-center rounded-xl bg-gradient-to-br from-[oklch(0.64_0.16_60)] to-[oklch(0.45_0.13_45)] text-white shadow-md"><Gavel weight="duotone" className="size-[1.375rem]" /></span>
             <h3 className="mt-6 text-2xl font-semibold tracking-[-0.03em]">Disputes with a paper trail</h3>
             <p className="mt-2.5 leading-relaxed text-foreground-soft">A candidate can challenge the mark on a specific question. The examiner answers with a reason the candidate sees; an accepted dispute recalculates the total, is logged, and the verification record updates with it.</p>
             <ol className="mt-6 space-y-3 text-sm">
@@ -217,22 +217,25 @@ export function HomePage() {
 
       <section className="px-4 pb-24 sm:px-6">
         <Reveal className="mx-auto max-w-6xl">
-          <div className="relative overflow-hidden rounded-[2rem] bg-foreground px-7 py-14 text-background sm:px-14 sm:py-20">
+          <div className="scroll-reveal relative isolate overflow-hidden rounded-[2rem] bg-[oklch(0.17_0.04_var(--brand-h))] px-7 py-14 text-white sm:px-14 sm:py-20">
+            <div className="auth-orb absolute -top-24 -right-16 -z-10 size-80 rounded-full bg-[oklch(0.55_0.2_var(--brand-h)/0.55)] blur-3xl" aria-hidden="true" />
+            <div className="auth-orb absolute -bottom-32 left-10 -z-10 size-80 rounded-full bg-[oklch(0.62_0.16_290/0.4)] blur-3xl [animation-delay:-5s]" aria-hidden="true" />
+            <div className="hero-grid absolute inset-0 -z-10 opacity-[0.08]" aria-hidden="true" />
             <div className="relative flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-xl">
                 <h2 className="text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.02] font-semibold tracking-[-0.045em]">See a live exam in under a minute.</h2>
-                <p className="mt-4 text-lg text-background/70">The demo has a quiz running right now, a graded midterm with published results, and an open dispute waiting for an examiner.</p>
+                <p className="mt-4 text-lg text-white/75">The demo has a quiz running right now, a graded midterm with published results, and an open dispute waiting for an examiner.</p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
-                <Button size="lg" render={<Link href="/login" />} className="bg-background text-foreground [background-image:none] hover:bg-background/90">
+                <Button size="lg" render={<Link href="/login" />} className="cta-shine relative overflow-hidden bg-white text-[oklch(0.2_0.03_var(--brand-h))] bg-none! hover:bg-white/90">
                   Open the live demo <ArrowRight className="rtl:rotate-180" />
                 </Button>
               </div>
             </div>
-            <ul className="relative mt-12 grid gap-4 border-t border-background/15 pt-8 text-sm text-background/75 sm:grid-cols-3">
-              <li className="flex items-center gap-2.5"><CheckCircle weight="fill" className="size-4 text-background" /> Answer keys never leave the server</li>
-              <li className="flex items-center gap-2.5"><CheckCircle weight="fill" className="size-4 text-background" /> No webcam or screen recording</li>
-              <li className="flex items-center gap-2.5"><CheckCircle weight="fill" className="size-4 text-background" /> Works on phones and slow networks</li>
+            <ul className="relative mt-12 grid gap-4 border-t border-white/15 pt-8 text-sm text-white/80 sm:grid-cols-3">
+              <li className="flex items-center gap-2.5"><CheckCircle weight="fill" className="size-4 text-[oklch(0.8_0.15_160)]" /> Answer keys never leave the server</li>
+              <li className="flex items-center gap-2.5"><CheckCircle weight="fill" className="size-4 text-[oklch(0.8_0.15_160)]" /> No webcam or screen recording</li>
+              <li className="flex items-center gap-2.5"><CheckCircle weight="fill" className="size-4 text-[oklch(0.8_0.15_160)]" /> Works on phones and slow networks</li>
             </ul>
           </div>
         </Reveal>

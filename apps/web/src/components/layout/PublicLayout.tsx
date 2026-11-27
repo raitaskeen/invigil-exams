@@ -2,9 +2,10 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight, GithubLogo, Pulse, SealCheck } from "@phosphor-icons/react";
+import { ArrowUpRight, GithubLogo } from "@phosphor-icons/react";
 import { Logo } from "@/components/brand/Logo";
 import { Navbar } from "@/components/layout/Navbar";
+import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { siteConfig } from "@/lib/site-config";
 
 export function PublicLayout({ children }: { children: ReactNode }) {
@@ -16,6 +17,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
       >
         Skip to content
       </a>
+      <ScrollProgress />
       <Navbar />
       <main id="main" className="flex-1">
         {children}
@@ -28,14 +30,6 @@ export function PublicLayout({ children }: { children: ReactNode }) {
               <Logo />
             </Link>
             <p className="max-w-xs text-sm text-white/70">{siteConfig.tagline}</p>
-            <div className="flex flex-wrap gap-2">
-              <a href="/api/health" className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 text-xs font-medium text-white/85 transition-colors hover:bg-white/10">
-                <Pulse className="size-3.5 text-emerald-400" aria-hidden="true" /> System status
-              </a>
-              <Link href="/verify" className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 text-xs font-medium text-white/85 transition-colors hover:bg-white/10">
-                <SealCheck className="size-3.5" aria-hidden="true" /> Verify a result
-              </Link>
-            </div>
           </div>
           {siteConfig.footer.map((col) => (
             <nav key={col.heading} aria-label={col.heading}>
