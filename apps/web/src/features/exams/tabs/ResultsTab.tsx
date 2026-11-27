@@ -15,6 +15,7 @@ import { api, apiErrorMessage } from "@/lib/api-client";
 import { DIFF_LABEL, downloadFile, fmtDateTime, fmtMarks, type Analytics, type ExamDetail } from "@/lib/exams";
 import { cn } from "@/lib/utils";
 import { DifficultyPill } from "@/features/questions/QuestionBankPage";
+import { RankingTable } from "./RankingTable";
 
 const tooltipStyle = { background: "var(--popover)", border: "1px solid var(--border-strong)", borderRadius: 12, boxShadow: "var(--shadow-md)", fontSize: 12, color: "var(--foreground)" };
 
@@ -131,32 +132,7 @@ export function ResultsTab({ exam }: { exam: ExamDetail }) {
             </Panel>
           </div>
 
-          <Panel title="Candidates" bodyClassName="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[36rem] text-sm">
-                <thead className="border-b border-border bg-surface-sunken/60 text-xs text-muted-foreground">
-                  <tr>
-                    <th className="px-5 py-2.5 text-start font-medium">#</th>
-                    <th className="px-3 py-2.5 text-start font-medium">Candidate</th>
-                    <th className="px-3 py-2.5 text-end font-medium">Score</th>
-                    <th className="w-48 px-3 py-2.5 text-start font-medium">Percent</th>
-                    <th className="px-5 py-2.5 text-end font-medium">Outcome</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {a.candidates.map((c, i) => (
-                    <tr key={c.attemptId} className="transition-colors hover:bg-muted/40">
-                      <td className="px-5 py-3 text-muted-foreground tabular-nums">{i + 1}</td>
-                      <td className="px-3 py-3"><Link href={`/app/results/view?attempt=${c.attemptId}`} className="font-medium hover:underline">{c.fullName}</Link></td>
-                      <td className="px-3 py-3 text-end tabular-nums">{fmtMarks(c.score)} / {fmtMarks(c.maxScore)}</td>
-                      <td className="px-3 py-3"><div className="flex items-center gap-2"><Meter className="flex-1" value={c.percent} tone={c.passed ? "success" : "danger"} label={`${c.fullName} percent`} /><span className="w-12 text-end tabular-nums">{c.percent}%</span></div></td>
-                      <td className="px-5 py-3 text-end">{c.pendingManual ? <StatusBadge tone="warning">To grade</StatusBadge> : c.passed ? <StatusBadge tone="success">Pass</StatusBadge> : <StatusBadge tone="danger">Below pass</StatusBadge>}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Panel>
+          <RankingTable examId={exam.id} />
 
           <Panel
             title="Question analytics"

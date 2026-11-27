@@ -239,7 +239,7 @@ export class AttemptService {
         extraMinutes: a.extraMinutes,
         scratchpad: a.scratchpad,
       },
-      exam: { id: exam!.id, title: exam!.title, instructions: exam!.instructions, totalMarks: exam!.totalMarks, blockCopyPaste: exam!.blockCopyPaste },
+      exam: { id: exam!.id, title: exam!.title, instructions: exam!.instructions, totalMarks: exam!.totalMarks, blockCopyPaste: exam!.blockCopyPaste, isPractice: exam!.isPractice },
       // The answer key never leaves the server.
       paper: a.paper.map(strip),
       answers: rows.map((r) => ({ questionId: r.questionId, response: r.response, flagged: r.flagged, savedAt: r.savedAt })),

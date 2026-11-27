@@ -19,6 +19,7 @@ import { TYPE_LABEL } from "@np/shared";
 import { downloadFile, fmtDateTime, fmtMarks, pct, type Dispute, type ResultDetail } from "@/lib/exams";
 import { cn } from "@/lib/utils";
 import { ScoreRing } from "./ScoreRing";
+import { MyRank } from "./MyRank";
 
 type Q = ResultDetail["questions"][number];
 
@@ -144,6 +145,8 @@ export function ResultDetailPage() {
           )}
         </div>
       </section>
+
+      {!examinerView && exam.resultsPublished && !a.isSandbox && <MyRank attemptId={a.id} />}
 
       <Panel title="Question by question" description={examinerView ? "Correct options are highlighted. Candidates never see the answer key." : "Your answers, the marks awarded and any feedback."} bodyClassName="p-0">
         <ol className="divide-y divide-border">

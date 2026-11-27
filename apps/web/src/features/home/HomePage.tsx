@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import { EmblemMarquee, FaqSection, HeroImagery } from "./HomeExtras";
+import { Showcase } from "./HomeShowcase";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -37,46 +38,6 @@ function SectionHead({ title, body, className }: { title: ReactNode; body: React
       <h2 className="text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.02] font-semibold tracking-[-0.045em] text-balance">{title}</h2>
       <p className="mt-5 text-lg leading-relaxed text-pretty text-foreground-soft">{body}</p>
     </Reveal>
-  );
-}
-
-// ---- Hero visual: the real exam workspace, drawn in code ------------------------------------------------------
-
-// ---- Photo band ------------------------------------------------------------------------------------------------
-
-const PHOTOS = [
-  { id: "photo-1513258496099-48168024aec0", alt: "A student with headphones working on a laptop", title: "For candidates", body: "A quiet workspace that saves every answer and never loses time." },
-  { id: "photo-1580582932707-520aed937b7b", alt: "An empty classroom with rows of desks", title: "For exam halls", body: "Runs on campus Wi-Fi or a phone hotspot, with no installs." },
-  { id: "photo-1758270705317-3ef6142d306f", alt: "A group of students gathered around a laptop", title: "For examiners", body: "Build, publish, watch and grade from one place." },
-];
-const img = (id: string, w: number) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=75`;
-
-function PhotoBand() {
-  return (
-    <section aria-label="Who it is for" className="px-4 pb-8 sm:px-6">
-      <div className="mx-auto grid max-w-6xl gap-4 md:grid-cols-3">
-        {PHOTOS.map((p, i) => (
-          <Reveal key={p.id} delay={i * 0.08}>
-            <figure className="group relative overflow-hidden rounded-[1.5rem] bg-muted">
-              <img
-                src={img(p.id, 900)}
-                srcSet={`${img(p.id, 600)} 600w, ${img(p.id, 900)} 900w, ${img(p.id, 1200)} 1200w`}
-                sizes="(min-width: 768px) 33vw, 100vw"
-                alt={p.alt}
-                loading="lazy"
-                decoding="async"
-                className={cn("w-full object-cover transition-transform duration-700 ease-[var(--ease-out)] group-hover:scale-[1.04]", i === 1 ? "aspect-[4/5] md:mt-10" : "aspect-[4/5]")}
-              />
-              <figcaption className="absolute inset-x-3 bottom-3 rounded-2xl border border-white/20 bg-black/35 p-4 text-white backdrop-blur-xl">
-                <b className="block text-[0.9375rem] font-semibold tracking-[-0.01em]">{p.title}</b>
-                <span className="mt-0.5 block text-[0.8125rem] text-white/80">{p.body}</span>
-              </figcaption>
-            </figure>
-          </Reveal>
-        ))}
-      </div>
-      <p className="mx-auto mt-3 max-w-6xl text-end text-[0.6875rem] text-muted-foreground">Photos: Unsplash</p>
-    </section>
   );
 }
 
@@ -149,168 +110,6 @@ function Workflow() {
             </motion.ol>
           </AnimatePresence>
         </div>
-      </div>
-    </section>
-  );
-}
-
-// ---- Resilience simulator ---------------------------------------------------------------------------------------
-
-type Net = "online" | "offline" | "syncing";
-function Resilience() {
-  const [net, setNet] = useState<Net>("online");
-  const [queued, setQueued] = useState(0);
-  const [saved, setSaved] = useState(3);
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
-  useEffect(() => () => timers.current.forEach(clearTimeout), []);
-
-  const drop = () => {
-    timers.current.forEach(clearTimeout);
-    setNet("offline");
-    setQueued(0);
-    timers.current = [
-      setTimeout(() => setQueued(1), 700),
-      setTimeout(() => setQueued(2), 1500),
-      setTimeout(() => setNet("syncing"), 3000),
-      setTimeout(() => {
-        setNet("online");
-        setSaved((s) => s + 2);
-        setQueued(0);
-      }, 4200),
-    ];
-  };
-
-  const chip = {
-    online: { icon: CloudCheck, text: "All answers saved", cls: "bg-success-soft text-success" },
-    offline: { icon: CloudSlash, text: queued ? `Offline · ${queued} answer${queued > 1 ? "s" : ""} queued on this device` : "Offline · saving on this device", cls: "bg-warning-soft text-warning" },
-    syncing: { icon: ArrowsClockwise, text: "Back online · syncing", cls: "bg-brand-soft text-brand-ink" },
-  }[net];
-
-  return (
-    <section id="resilience" className="scroll-mt-24 bg-surface-sunken/60 px-4 py-24 sm:px-6 sm:py-32">
-      <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
-        <div>
-          <SectionHead
-            title="The Wi-Fi drops. The exam doesn't."
-            body="Every answer is saved the moment it changes. Offline, it waits on the device and replays in order when the connection returns. The deadline lives on the server, so nobody loses time to a flaky router, and nobody gains any either."
-          />
-          <Reveal delay={0.1} className="mt-8 flex flex-wrap gap-3">
-            <Button onClick={drop} disabled={net !== "online"}>
-              <WifiSlash /> Drop the connection
-            </Button>
-            <span className="self-center text-sm text-muted-foreground">Try it: the timer keeps running.</span>
-          </Reveal>
-        </div>
-        <Reveal delay={0.1}>
-          <div className="rounded-[1.5rem] border border-border bg-card p-6 shadow-[var(--glass-edge),0_30px_60px_-30px_oklch(0.25_0.04_262/0.35)] sm:p-8">
-            <div className="flex items-center justify-between gap-3">
-              <motion.span layout className={cn("flex items-center gap-2 rounded-full px-3 py-1.5 text-[0.8125rem] font-medium", chip.cls)} transition={{ duration: 0.35, ease: EASE }}>
-                <chip.icon weight="bold" className={cn("size-4", net === "syncing" && "animate-spin")} />
-                <AnimatePresence mode="popLayout" initial={false}>
-                  <motion.span key={chip.text} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.25 }}>
-                    {chip.text}
-                  </motion.span>
-                </AnimatePresence>
-              </motion.span>
-              {net === "offline" ? <WifiSlash className="size-5 text-warning" /> : <WifiHigh className="size-5 text-success" />}
-            </div>
-            <ul className="mt-6 space-y-2.5">
-              {[1, 2, 3, 4, 5, 6].map((n) => {
-                const isSaved = n <= saved;
-                const isQueued = !isSaved && n <= saved + queued;
-                return (
-                  <li key={n} className="flex items-center gap-3 rounded-xl border border-border px-4 py-3 text-sm">
-                    <span className="w-6 font-semibold text-muted-foreground tabular-nums">Q{n}</span>
-                    <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
-                      <motion.span
-                        className={cn("block h-full rounded-full", isSaved ? "bg-success" : isQueued ? "bg-warning" : "bg-transparent")}
-                        initial={false}
-                        animate={{ width: isSaved || isQueued ? "100%" : "0%" }}
-                        transition={{ duration: 0.6, ease: EASE }}
-                      />
-                    </span>
-                    <span className={cn("w-24 text-end text-xs font-medium", isSaved ? "text-success" : isQueued ? "text-warning" : "text-muted-foreground")}>
-                      {isSaved ? "Saved" : isQueued ? "On device" : "Not answered"}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-            <p className="mt-5 text-[0.8125rem] text-muted-foreground">If time runs out while offline, the attempt is finalised with the answers the server accepted before the deadline - exactly as the rules say.</p>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-// ---- Fairness: stratified draw ----------------------------------------------------------------------------------
-
-const POOL = { easy: [1, 2, 3, 4, 5], medium: [6, 7, 8, 9], hard: [10, 11] };
-const DRAW = { easy: 3, medium: 2, hard: 1 };
-function drawPaper(seed: number) {
-  const pick = (arr: number[], n: number, s: number) => [...arr].sort((a, b) => ((a * 9301 + s * 49297) % 233) - ((b * 9301 + s * 49297) % 233)).slice(0, n);
-  return [...pick(POOL.easy, DRAW.easy, seed), ...pick(POOL.medium, DRAW.medium, seed + 7), ...pick(POOL.hard, DRAW.hard, seed + 13)];
-}
-const level = (q: number) => (q <= 5 ? "easy" : q <= 9 ? "medium" : "hard");
-const MARKS = { easy: 2, medium: 3, hard: 5 };
-
-function Fairness() {
-  const [round, setRound] = useState(1);
-  const papers = useMemo(() => [0, 1, 2].map((c) => drawPaper(round * 3 + c * 11)), [round]);
-  return (
-    <section id="fairness" className="scroll-mt-24 px-4 py-24 sm:px-6 sm:py-32">
-      <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1fr_1.1fr]">
-        <div>
-          <SectionHead
-            title="Different papers. The same exam."
-            body="Random papers are only fair if they are equally hard. Invigil draws the same number of easy, medium and hard questions for every candidate from a larger pool, and refuses to publish unless every possible paper carries the same marks."
-          />
-          <Reveal delay={0.1} className="mt-8">
-            <Button variant="outline" onClick={() => setRound((r) => r + 1)}>
-              <Shuffle /> Draw new papers
-            </Button>
-          </Reveal>
-        </div>
-        <Reveal delay={0.1}>
-          <LayoutGroup>
-            <div className="grid grid-cols-3 gap-3 sm:gap-4">
-              {papers.map((paper, c) => (
-                <div key={c} className="rounded-2xl border border-border bg-card p-3 shadow-sm sm:p-4">
-                  <p className="text-xs font-semibold">Candidate {String.fromCharCode(65 + c)}</p>
-                  <ul className="mt-3 space-y-1.5">
-                    {paper.map((q) => (
-                      <motion.li
-                        layout
-                        key={`${c}-${q}-${round}`}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.45, ease: EASE }}
-                        className={cn(
-                          "flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium",
-                          level(q) === "easy" && "bg-success-soft text-success",
-                          level(q) === "medium" && "bg-warning-soft text-warning",
-                          level(q) === "hard" && "bg-danger-soft text-danger",
-                        )}
-                      >
-                        <span>Q{q}</span>
-                        <span className="opacity-80">{MARKS[level(q)]}m</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                  <p className="mt-3 border-t border-border pt-2.5 text-xs text-muted-foreground">
-                    <b className="text-foreground tabular-nums">17</b> marks
-                  </p>
-                </div>
-              ))}
-            </div>
-          </LayoutGroup>
-          <div className="mt-4 flex flex-wrap gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-success" /> 3 easy from 5</span>
-            <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-warning" /> 2 medium from 4</span>
-            <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-danger" /> 1 hard from 2</span>
-          </div>
-        </Reveal>
       </div>
     </section>
   );
@@ -450,10 +249,8 @@ export function HomePage() {
       </section>
 
       <EmblemMarquee />
-      <PhotoBand />
+      <Showcase />
       <Workflow />
-      <Resilience />
-      <Fairness />
       <Trust />
       <FaqSection />
 

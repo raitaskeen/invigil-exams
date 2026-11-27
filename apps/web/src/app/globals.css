@@ -336,3 +336,72 @@
     width: auto;
   }
 }
+
+/* ---- Auth: drifting photo + soft light orbs ------------------------------------------------------------- */
+@keyframes kenburns {
+  0% {
+    opacity: 0;
+    transform: scale(1.12) translate3d(0, 0, 0);
+  }
+  8% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.02) translate3d(-1.5%, -1%, 0);
+  }
+}
+.auth-kenburns {
+  animation: kenburns 24s var(--ease-out) both;
+}
+@keyframes orb {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, 6%, 0) scale(1.08);
+  }
+}
+.auth-orb {
+  animation: orb 14s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .auth-kenburns {
+    opacity: 1;
+  }
+}
+
+/* ---- Help bot launcher: rotating conic rim + beacon pulse ------------------------------------------------ */
+.bot-ring {
+  background: conic-gradient(from var(--bot-angle, 0deg), #6366f1, #22d3ee, #a855f7, #6366f1);
+  animation: bot-spin 6s linear infinite;
+  filter: saturate(1.1);
+}
+@property --bot-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes bot-spin {
+  to {
+    --bot-angle: 360deg;
+  }
+}
+.bot-launcher:hover .bot-ring {
+  animation-duration: 2.5s;
+}
+.bot-beacon {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bot-beacon 2.4s ease-in-out infinite;
+}
+@keyframes bot-beacon {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(0.82);
+  }
+}

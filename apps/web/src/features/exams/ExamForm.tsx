@@ -33,6 +33,7 @@ function defaults(exam?: ExamRow | null): In {
       shuffleQuestions: exam.shuffleQuestions,
       shuffleOptions: exam.shuffleOptions,
       blockCopyPaste: exam.blockCopyPaste,
+      isPractice: exam.isPractice ?? false,
       drawEasy: exam.drawEasy ?? "",
       drawMedium: exam.drawMedium ?? "",
       drawHard: exam.drawHard ?? "",
@@ -51,6 +52,7 @@ function defaults(exam?: ExamRow | null): In {
     shuffleQuestions: true,
     shuffleOptions: true,
     blockCopyPaste: true,
+    isPractice: false,
     drawEasy: "",
     drawMedium: "",
     drawHard: "",
@@ -150,6 +152,7 @@ export function ExamForm({
           <Toggle label="Shuffle question order" hint="Each candidate sees the questions in a different order." registration={register("shuffleQuestions")} />
           <Toggle label="Shuffle answer options" hint="Option order varies per candidate; marking follows the option, not its position." registration={register("shuffleOptions")} />
           <Toggle label="Discourage copy and paste" hint="Blocks clipboard in the workspace and records attempts as signals." registration={register("blockCopyPaste")} />
+          <Toggle label="Practice test (mock)" hint="Candidates can take it any time, as often as they like, with instant MCQ marking. Never counts in official results or rankings." registration={register("isPractice")} />
         </div>
         {Number.isFinite(duration) && duration > 0 && windowMin > 0 && duration > windowMin && (
           <p className="text-[0.8125rem] text-danger">Duration is longer than the window.</p>

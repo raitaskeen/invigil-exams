@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  ArrowSquareOut, Books, CaretUpDown, ClipboardText, List, MagnifyingGlass, Scales, SealCheck, SignOut, SquaresFour, Users, X, type Icon,
+  ArrowSquareOut, Books, CaretUpDown, ChatCircleText, ClipboardText, Exam, FileText, List, MagnifyingGlass, Scales, SealCheck, SignOut, SquaresFour, Users, X, type Icon,
 } from "@phosphor-icons/react";
 import { Logo } from "@/components/brand/Logo";
 import { Preferences } from "@/components/layout/Preferences";
@@ -44,6 +44,9 @@ function useNavItems(): NavItem[] {
     { href: "/app/questions", label: t("nav.questions"), icon: Books, section: t("nav.workspace"), permission: "questions:manage" },
     { href: "/app/disputes", label: t("nav.disputes"), icon: Scales, section: t("nav.workspace"), permission: "exams:manage" },
     { href: "/app/results", label: t("nav.results"), icon: SealCheck, section: t("nav.workspace"), permission: "exams:take" },
+    { href: "/app/practice", label: "Practice tests", icon: Exam, section: t("nav.workspace"), permission: "exams:take" },
+    { href: "/app/papers", label: "Past papers", icon: FileText, section: t("nav.workspace") },
+    { href: "/app/feedback", label: "Feedback", icon: ChatCircleText, section: t("nav.workspace") },
     { href: "/app/users", label: t("nav.users"), icon: Users, section: t("nav.admin"), permission: "users:read" },
   ];
   return items.filter((i) => !i.permission || can(i.permission));

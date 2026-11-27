@@ -565,7 +565,8 @@ export function ExamWorkspace() {
       </Centered>
     );
 
-  const exitHref = s.attempt.isSandbox ? `/app/exams/view?id=${s.attempt.examId}` : "/app";
+  const practice = s.attempt.isSandbox && !!s.exam.isPractice;
+  const exitHref = practice ? `/app/practice/review?attempt=${s.attempt.id}` : s.attempt.isSandbox ? `/app/exams/view?id=${s.attempt.examId}` : "/app";
 
   if (phase === "done") {
     return (
@@ -578,15 +579,17 @@ export function ExamWorkspace() {
             {final?.submittedAt ? ` · ${fmtTime(final.submittedAt)}` : ""}
           </p>
           <p className="mt-4 text-sm text-muted-foreground">
-            {s.attempt.isSandbox
+            {practice
+              ? "Practice attempt submitted. Multiple-choice answers are marked instantly - open your review. Practice never counts towards official results or rankings."
+              : s.attempt.isSandbox
               ? "This was a sandbox preview. It isn't part of results, analytics or reports."
               : final?.auto
                 ? "Every answer the server accepted before the deadline is included. You'll see your result here once your examiner publishes it."
                 : "Your answers are locked in. You'll see your result once your examiner publishes it."}
           </p>
           <div className="mt-7 grid gap-2">
-            <Button render={<Link href={exitHref} />}>{s.attempt.isSandbox ? "Back to exam setup" : "Back to my exams"}</Button>
-            {s.attempt.isSandbox && (
+            <Button render={<Link href={exitHref} />}>{practice ? "See my score and answer review" : s.attempt.isSandbox ? "Back to exam setup" : "Back to my exams"}</Button>
+            {s.attempt.isSandbox && !practice && (
               <Button
                 variant="ghost"
                 onClick={async () => {
@@ -614,7 +617,7 @@ export function ExamWorkspace() {
           <LogoMark className="size-8" />
           <div className="min-w-0 flex-1">
             <p className="truncate font-semibold tracking-[-0.01em]">{s.exam.title}</p>
-            <p className="truncate text-xs text-muted-foreground">{s.attempt.isSandbox ? "Sandbox preview · not recorded" : `${stats.answered} of ${s.paper.length} answered`}</p>
+            <p className="truncate text-xs text-muted-foreground">{practice ? "Practice test · not official" : s.attempt.isSandbox ? "Sandbox preview · not recorded" : `${stats.answered} of ${s.paper.length} answered`}</p>
           </div>
           <SaveChip status={queue.status} pending={queue.pending} online={online} />
           <TimerChip ms={remaining} />

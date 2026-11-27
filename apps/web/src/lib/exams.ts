@@ -44,6 +44,7 @@ export interface ExamRow {
   drawMedium: number | null;
   drawHard: number | null;
   blockCopyPaste: boolean;
+  isPractice?: boolean;
   resultsPublished: boolean;
   resultsPublishedAt: string | null;
   createdAt: string;
@@ -195,7 +196,7 @@ export interface Dispute {
 
 export interface AttemptState {
   attempt: { id: number; examId: number; status: AttemptStatus; isSandbox: boolean; startedAt: string; deadlineAt: string; submittedAt: string | null; extraMinutes: number; scratchpad: string };
-  exam: { id: number; title: string; instructions: string; totalMarks: number; blockCopyPaste: boolean };
+  exam: { id: number; title: string; instructions: string; totalMarks: number; blockCopyPaste: boolean; isPractice?: boolean };
   paper: PaperQuestion[];
   answers: { questionId: number; response: string[] | string | null; flagged: boolean; savedAt: string }[];
   announcements: { id: number; message: string; at: string }[];

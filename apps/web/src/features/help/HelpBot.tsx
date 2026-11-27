@@ -17,36 +17,67 @@ interface Msg {
   error?: boolean;
 }
 
-/** A small, friendly 3D-looking robot head: gradient shading, a gentle float and a periodic blink. */
+/**
+ * "Invi": a glossy, layered 3D-style robot head. Pure SVG (no image requests): rim-lit shell, glass visor with
+ * reflections, glowing eyes that blink, an antenna beacon, and a soft contact shadow. Float + blink via CSS.
+ */
 export function BotFace({ className, animated = true }: { className?: string; animated?: boolean }) {
   return (
-    <svg viewBox="0 0 64 64" className={cn(animated && "bot-float", className)} aria-hidden="true">
+    <svg viewBox="0 0 96 96" className={cn(animated && "bot-float", className)} aria-hidden="true">
       <defs>
-        <radialGradient id="bot-head" cx="35%" cy="28%" r="80%">
+        <radialGradient id="invi-shell" cx="34%" cy="26%" r="85%">
           <stop offset="0" stopColor="#ffffff" />
-          <stop offset=".55" stopColor="#dfe7ff" />
-          <stop offset="1" stopColor="#9fb3f5" />
+          <stop offset=".38" stopColor="#eef2ff" />
+          <stop offset=".78" stopColor="#b9c6fb" />
+          <stop offset="1" stopColor="#7f8fe6" />
         </radialGradient>
-        <linearGradient id="bot-visor" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#1f2a5c" />
-          <stop offset="1" stopColor="#0d1433" />
+        <linearGradient id="invi-rim" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#ffffff" stopOpacity=".95" />
+          <stop offset=".5" stopColor="#a5b4fc" stopOpacity=".2" />
+          <stop offset="1" stopColor="#6366f1" stopOpacity=".9" />
         </linearGradient>
-        <radialGradient id="bot-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0" stopColor="#7cf3ff" />
-          <stop offset="1" stopColor="#3aa8ff" />
+        <linearGradient id="invi-visor" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#1e2a6e" />
+          <stop offset=".55" stopColor="#0c1238" />
+          <stop offset="1" stopColor="#060a24" />
+        </linearGradient>
+        <radialGradient id="invi-eye" cx="50%" cy="40%" r="60%">
+          <stop offset="0" stopColor="#ecfeff" />
+          <stop offset=".45" stopColor="#67e8f9" />
+          <stop offset="1" stopColor="#0ea5e9" />
         </radialGradient>
+        <radialGradient id="invi-beacon" cx="40%" cy="35%" r="65%">
+          <stop offset="0" stopColor="#fdf4ff" />
+          <stop offset=".5" stopColor="#c084fc" />
+          <stop offset="1" stopColor="#7c3aed" />
+        </radialGradient>
+        <linearGradient id="invi-ear" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#c7d2fe" />
+          <stop offset="1" stopColor="#6366f1" />
+        </linearGradient>
+        <filter id="invi-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2.2" result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
       </defs>
-      <ellipse cx="32" cy="59" rx="15" ry="2.6" fill="#0b1230" opacity=".18" />
-      <line x1="32" y1="9" x2="32" y2="15" stroke="#8ea2e8" strokeWidth="2.4" strokeLinecap="round" />
-      <circle cx="32" cy="7.5" r="3.4" fill="url(#bot-glow)" />
-      <rect x="7" y="27" width="6" height="13" rx="3" fill="#8ea2e8" />
-      <rect x="51" y="27" width="6" height="13" rx="3" fill="#8ea2e8" />
-      <rect x="10" y="14" width="44" height="38" rx="15" fill="url(#bot-head)" stroke="#8ea2e8" strokeWidth="1.2" />
-      <rect x="16" y="22" width="32" height="20" rx="10" fill="url(#bot-visor)" />
-      <ellipse className="bot-eye" cx="25.5" cy="31.5" rx="3.2" ry="3.8" fill="url(#bot-glow)" />
-      <ellipse className="bot-eye" cx="38.5" cy="31.5" rx="3.2" ry="3.8" fill="url(#bot-glow)" />
-      <path d="M27.5 37.2q4.5 3 9 0" fill="none" stroke="#7cf3ff" strokeWidth="1.8" strokeLinecap="round" />
-      <ellipse cx="22" cy="19.5" rx="6" ry="2.2" fill="#fff" opacity=".7" />
+      <ellipse cx="48" cy="89" rx="22" ry="3.4" fill="#1e1b4b" opacity=".22" />
+      <path d="M48 20v-8" stroke="url(#invi-ear)" strokeWidth="3" strokeLinecap="round" />
+      <circle className="bot-beacon" cx="48" cy="9" r="5" fill="url(#invi-beacon)" filter="url(#invi-glow)" />
+      <rect x="8" y="40" width="10" height="22" rx="5" fill="url(#invi-ear)" />
+      <rect x="78" y="40" width="10" height="22" rx="5" fill="url(#invi-ear)" />
+      <rect x="14" y="20" width="68" height="62" rx="26" fill="url(#invi-shell)" />
+      <rect x="14.75" y="20.75" width="66.5" height="60.5" rx="25.3" fill="none" stroke="url(#invi-rim)" strokeWidth="1.5" />
+      <rect x="22" y="32" width="52" height="34" rx="17" fill="url(#invi-visor)" />
+      <rect x="22.5" y="32.5" width="51" height="33" rx="16.5" fill="none" stroke="#818cf8" strokeOpacity=".55" />
+      <g filter="url(#invi-glow)">
+        <rect className="bot-eye" x="33" y="41" width="9" height="12" rx="4.5" fill="url(#invi-eye)" />
+        <rect className="bot-eye" x="54" y="41" width="9" height="12" rx="4.5" fill="url(#invi-eye)" />
+      </g>
+      <path d="M40.5 58.5q7.5 4 15 0" fill="none" stroke="#67e8f9" strokeWidth="2.4" strokeLinecap="round" opacity=".9" />
+      <path d="M27 37c4-3 10-4.5 16-4.5" fill="none" stroke="#fff" strokeOpacity=".35" strokeWidth="2.5" strokeLinecap="round" />
+      <ellipse cx="33" cy="26.5" rx="11" ry="3.6" fill="#fff" opacity=".85" />
+      <circle cx="25" cy="70" r="3" fill="#f0abfc" opacity=".45" />
+      <circle cx="71" cy="70" r="3" fill="#f0abfc" opacity=".45" />
     </svg>
   );
 }
@@ -126,8 +157,8 @@ export function HelpBot() {
             className="fixed inset-x-3 bottom-24 z-40 flex max-h-[min(36rem,calc(100dvh-8rem))] flex-col overflow-hidden rounded-[1.5rem] border border-border-strong bg-popover shadow-2xl sm:inset-x-auto sm:end-5 sm:w-[23rem]"
           >
             <header className="flex items-center gap-3 bg-gradient-to-br from-primary to-[oklch(0.45_0.2_275)] px-4 py-3 text-primary-foreground">
-              <span className="grid size-10 place-items-center rounded-2xl bg-white/15">
-                <BotFace className="size-8" animated={false} />
+              <span className="grid size-11 place-items-center rounded-2xl bg-white/90 shadow-inner">
+                <BotFace className="size-9" animated={false} />
               </span>
               <div className="min-w-0 flex-1">
                 <h2 className="text-[0.9375rem] leading-tight font-semibold">Invi · Help</h2>
@@ -215,10 +246,12 @@ export function HelpBot() {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label={open ? "Close help" : "Open help chat"}
-        className="group fixed end-4 bottom-4 z-40 grid size-16 place-items-center rounded-full bg-gradient-to-br from-[oklch(0.97_0.02_265)] to-[oklch(0.86_0.06_265)] shadow-[0_10px_30px_-8px_oklch(0.4_0.15_265/0.55)] ring-1 ring-black/5 transition-transform duration-300 hover:scale-105 active:scale-95 sm:end-5 sm:bottom-5"
+        className="bot-launcher group fixed end-4 bottom-4 z-40 grid size-[4.25rem] place-items-center rounded-full transition-transform duration-300 ease-[var(--ease-out)] hover:scale-[1.06] active:scale-95 sm:end-6 sm:bottom-6"
       >
-        {open ? <X weight="bold" className="size-6 text-[oklch(0.35_0.12_265)]" /> : <BotFace className="size-12" />}
-        {!open && <span className="absolute end-1 top-1 size-3 rounded-full bg-success ring-2 ring-background" aria-hidden="true" />}
+        <span className="bot-ring absolute inset-0 rounded-full" aria-hidden="true" />
+        <span className="absolute inset-[3px] rounded-full bg-[radial-gradient(circle_at_30%_25%,#ffffff,#e0e7ff_55%,#c7d2fe)] shadow-[inset_0_-6px_14px_rgba(99,102,241,.35),0_14px_34px_-10px_rgba(79,70,229,.65)] dark:bg-[radial-gradient(circle_at_30%_25%,#3b4285,#1e2353_60%,#11143a)]" aria-hidden="true" />
+        {open ? <X weight="bold" className="relative size-6 text-indigo-600 dark:text-indigo-200" /> : <BotFace className="relative size-[3.1rem]" />}
+        {!open && <span className="absolute end-0.5 top-0.5 flex size-3.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-success/60" /><span className="relative inline-flex size-3.5 rounded-full bg-success ring-2 ring-background" /></span>}
       </button>
     </>
   );

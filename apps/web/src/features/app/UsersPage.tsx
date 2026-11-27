@@ -1,5 +1,6 @@
 "use client";
 
+import { PasswordResets } from "@/features/feedback/FeedbackPage";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -72,6 +73,8 @@ export function UsersPage() {
           )
         }
       />
+
+      {canManage && <PasswordResets />}
 
       <Segmented
         label="Role"

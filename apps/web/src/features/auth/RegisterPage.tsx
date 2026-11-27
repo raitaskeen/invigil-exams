@@ -45,7 +45,7 @@ export function RegisterPage() {
 
   return (
     <AuthShell
-      backdrop={{ src: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=70", alt: "" }}
+      backdrop={{ src: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=2000&q=70", alt: "" }}
       title="Create your account"
       description={`Join your team on ${siteConfig.productName} - it takes under a minute.`}
       footer={

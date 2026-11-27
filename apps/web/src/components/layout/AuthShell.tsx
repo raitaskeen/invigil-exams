@@ -13,76 +13,66 @@ type AuthShellProps = {
   /** Below the form - usually "Already have an account? Log in". */
   footer: ReactNode;
   children: ReactNode;
-  /** Optional photo behind the form column, under a frosted overlay that keeps the form high-contrast. */
+  /** Photo behind the card. Defaults to students studying together. */
   backdrop?: { src: string; alt: string };
 };
 
+const DEFAULT_BACKDROP = "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=2000&q=70";
+
+const PROMISES = [
+  { icon: Timer, t: "Server-kept time" },
+  { icon: CloudCheck, t: "Saves offline" },
+  { icon: LockKey, t: "Keys never sent" },
+  { icon: SealCheck, t: "Verifiable results" },
+];
+
 /**
- * Sign-in/sign-up layout: a calm form column, and (from lg) a brand panel with what the product guarantees.
- * The form is the only thing on a phone - no scrolling past decoration to reach the fields.
+ * Sign-in / sign-up: one centered card over a slowly drifting photo. The card is opaque enough to stay
+ * high-contrast in both themes; the photo only sets the mood. On phones the card fills the width.
  */
 export function AuthShell({ title, description, footer, children, backdrop }: AuthShellProps) {
+  const src = backdrop?.src ?? DEFAULT_BACKDROP;
   return (
-    <div className="grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
-      <div className="relative isolate flex flex-col px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-8 sm:px-10">
-        {backdrop && (
-          <div className="absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
-            <img src={backdrop.src} alt="" decoding="async" className="size-full scale-105 object-cover animate-[fade-in_900ms_var(--ease-out)]" />
-            <div className="absolute inset-0 bg-gradient-to-b from-[oklch(0.15_0.03_260/0.78)] via-[oklch(0.15_0.03_260/0.62)] to-[oklch(0.12_0.03_260/0.85)] backdrop-blur-[3px]" />
-          </div>
-        )}
-        <header className={backdrop ? "flex items-center justify-between rounded-2xl border border-white/15 bg-background/85 px-3 py-1.5 backdrop-blur-xl" : "flex items-center justify-between"}>
-          <Link href="/" className="rounded-md" aria-label={`${siteConfig.productName} home`}>
-            <Logo />
-          </Link>
-          <div className="flex items-center gap-1">
-            <Preferences />
-            <Link
-              href="/"
-              className="hidden min-h-10 items-center gap-1.5 rounded-md px-2 text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
-            >
-              <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
-              Back to site
-            </Link>
-          </div>
-        </header>
-
-        <main id="main" className={backdrop ? "mx-auto flex w-full max-w-[27rem] flex-1 flex-col justify-center py-8 animate-rise" : "mx-auto flex w-full max-w-[25rem] flex-1 flex-col justify-center py-10 animate-rise"}>
-          <div className={backdrop ? "rounded-[1.5rem] border border-white/15 bg-background/90 p-6 shadow-2xl backdrop-blur-xl sm:p-8" : undefined}>
-          <h1 className="text-[2rem] leading-tight font-semibold tracking-[-0.04em]">{title}</h1>
-          <p className="mt-2 text-foreground-soft">{description}</p>
-          <div className="mt-8">{children}</div>
-          <p className="mt-8 text-center text-sm text-muted-foreground">{footer}</p>
-          </div>
-        </main>
-
-        <p className={backdrop ? "text-center text-xs text-white/75" : "text-center text-xs text-muted-foreground"}>
-          Protected by secure sessions and rate-limited sign-in.
-        </p>
+    <div className="relative isolate flex min-h-dvh flex-col overflow-hidden bg-[oklch(0.16_0.03_262)] px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-6 sm:px-6">
+      <div className="absolute inset-0 -z-10" aria-hidden="true">
+        <img src={src} alt="" decoding="async" fetchPriority="high" className="auth-kenburns size-full object-cover opacity-0 [animation-fill-mode:both]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.16_0.04_262/0.45),oklch(0.12_0.03_262/0.88)_75%)]" />
+        <div className="auth-orb absolute -top-32 -left-24 size-[28rem] rounded-full bg-[oklch(0.55_0.2_262/0.35)] blur-3xl" />
+        <div className="auth-orb absolute -right-24 -bottom-40 size-[30rem] rounded-full bg-[oklch(0.6_0.17_200/0.25)] blur-3xl [animation-delay:-6s]" />
       </div>
 
-      <aside className="relative m-3 hidden overflow-hidden rounded-[1.75rem] bg-foreground text-background lg:flex lg:flex-col lg:justify-between lg:p-14">
-        <div className="relative">
-          <p className="max-w-md text-[2.75rem] leading-[1] font-semibold tracking-[-0.05em] text-balance">{siteConfig.tagline}</p>
-          <p className="mt-5 max-w-md text-lg text-background/70">Sign in with one of the demo accounts to see each role.</p>
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between text-white">
+        <Link href="/" className="rounded-md [&_span]:text-white" aria-label={`${siteConfig.productName} home`}>
+          <Logo />
+        </Link>
+        <div className="flex items-center gap-1 rounded-full border border-white/15 bg-white/10 px-1 backdrop-blur-md [&_button]:text-white">
+          <Preferences />
+          <Link href="/" className="hidden min-h-10 items-center gap-1.5 rounded-full px-3 text-sm text-white/85 transition-colors hover:text-white sm:inline-flex">
+            <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
+            Back to site
+          </Link>
         </div>
-        <ul className="relative grid gap-3">
-          {[
-            { icon: Timer, t: "The server keeps the time", d: "Refresh or switch device - the deadline doesn't move." },
-            { icon: CloudCheck, t: "Answers save as you go", d: "Offline answers wait on the device and sync later." },
-            { icon: LockKey, t: "Keys stay on the server", d: "Correct answers are never sent to the browser." },
-            { icon: SealCheck, t: "Verifiable results", d: "Every report carries a code anyone can check." },
-          ].map((x, i) => (
-            <li key={x.t} className="flex items-start gap-4 rounded-2xl border border-background/10 bg-background/[0.05] p-4 animate-[rise_500ms_var(--ease-out)_backwards]" style={{ animationDelay: `${200 + i * 90}ms` }}>
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-background/10"><x.icon weight="duotone" className="size-5" /></span>
-              <span>
-                <b className="block font-semibold">{x.t}</b>
-                <span className="text-sm text-background/65">{x.d}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </aside>
+      </header>
+
+      <main id="main" className="flex flex-1 items-center justify-center py-8">
+        <div className="w-full max-w-[28rem] animate-[rise_600ms_var(--ease-out)_backwards]">
+          <div className="rounded-[1.75rem] border border-white/20 bg-background/[0.93] p-6 shadow-[0_30px_80px_-20px_oklch(0.1_0.05_262/0.7)] backdrop-blur-2xl sm:p-9">
+            <h1 className="text-[1.875rem] leading-tight font-semibold tracking-[-0.04em]">{title}</h1>
+            <p className="mt-1.5 text-foreground-soft">{description}</p>
+            <div className="mt-7">{children}</div>
+            <p className="mt-7 text-center text-sm text-muted-foreground">{footer}</p>
+          </div>
+          <ul className="mt-5 flex flex-wrap justify-center gap-2" aria-label="What Invigil guarantees">
+            {PROMISES.map((p, i) => (
+              <li key={p.t} className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-medium text-white/90 backdrop-blur-md animate-[rise_500ms_var(--ease-out)_backwards]" style={{ animationDelay: `${300 + i * 80}ms` }}>
+                <p.icon weight="duotone" className="size-3.5" aria-hidden="true" /> {p.t}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </main>
+
+      <p className="text-center text-xs text-white/60">Protected by secure sessions and rate-limited sign-in.</p>
     </div>
   );
 }
