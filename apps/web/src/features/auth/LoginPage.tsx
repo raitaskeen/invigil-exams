@@ -10,6 +10,7 @@ import { loginSchema, type LoginInput } from "@np/shared";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AuthFormLayout, AuthShell } from "@/components/layout/AuthShell";
 import { AuthField, AuthSubmit } from "@/features/auth/AuthField";
+import { ForgotPassword } from "@/features/auth/ForgotPassword";
 import { useAuth } from "@/lib/auth-context";
 import { apiErrorMessage, applyFieldErrors } from "@/lib/api-client";
 import { safeNext } from "@/lib/route-guards";
@@ -100,6 +101,9 @@ export function LoginPage() {
             error={errors.password?.message}
             dirty={!!dirtyFields.password}
           />
+          <div className="-mt-1 flex justify-end">
+            <ForgotPassword />
+          </div>
         </AuthFormLayout>
       </form>
     </AuthShell>

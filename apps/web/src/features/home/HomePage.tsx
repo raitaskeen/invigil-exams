@@ -12,6 +12,7 @@ import { Segmented } from "@/components/form/FormField";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
+import { EmblemMarquee, FaqSection, HeroImagery } from "./HomeExtras";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -41,106 +42,6 @@ function SectionHead({ title, body, className }: { title: ReactNode; body: React
 
 // ---- Hero visual: the real exam workspace, drawn in code ------------------------------------------------------
 
-function useTicker(start: number) {
-  const [s, setS] = useState(start);
-  useEffect(() => {
-    const id = setInterval(() => setS((v) => (v > 0 ? v - 1 : start)), 1000);
-    return () => clearInterval(id);
-  }, [start]);
-  return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
-}
-
-function WorkspacePreview() {
-  const time = useTicker(27 * 60 + 14);
-  const [picked, setPicked] = useState(1);
-  const states = ["done", "done", "done", "current", "flag", "", "done", "", "", "", "", ""];
-  return (
-    <div className="overflow-hidden rounded-[1.25rem] border border-[var(--glass-border)] bg-surface shadow-[var(--glass-edge),0_30px_80px_-30px_oklch(0.25_0.05_262/0.45),0_12px_24px_-12px_oklch(0.2_0.02_262/0.18)]">
-      <div className="flex items-center gap-3 border-b border-border px-4 py-3 sm:px-5">
-        <span className="flex gap-1.5" aria-hidden="true">
-          <span className="size-2.5 rounded-full bg-[oklch(0.75_0.15_25)]" />
-          <span className="size-2.5 rounded-full bg-[oklch(0.83_0.14_85)]" />
-          <span className="size-2.5 rounded-full bg-[oklch(0.75_0.15_150)]" />
-        </span>
-        <span className="min-w-0 flex-1 truncate text-[0.8125rem] font-medium">CS-301 Databases · Quiz 3</span>
-        <span className="hidden items-center gap-1.5 rounded-full bg-success-soft px-2.5 py-1 text-xs font-medium text-success sm:flex">
-          <CloudCheck weight="fill" className="size-3.5" /> Saved
-        </span>
-        <span className="flex items-center gap-1.5 rounded-lg bg-foreground px-2.5 py-1 font-mono text-[0.8125rem] font-medium text-background tabular-nums">
-          <Timer weight="bold" className="size-3.5" /> {time}
-        </span>
-      </div>
-      <div className="grid sm:grid-cols-[1fr_13rem]">
-        <div className="p-5 sm:p-7">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="font-medium text-foreground">Question 4 of 6</span> · 3 marks · Indexing
-          </div>
-          <p className="mt-3 text-[1.0625rem] leading-snug font-medium tracking-[-0.01em] sm:text-lg">Which index type best supports range queries such as BETWEEN?</p>
-          <div className="mt-5 space-y-2">
-            {["Hash index", "B-tree index", "No index", "Full-text index"].map((o, i) => (
-              <button
-                key={o}
-                type="button"
-                onClick={() => setPicked(i)}
-                className={cn(
-                  "flex w-full items-center gap-3 rounded-xl border px-3.5 py-2.5 text-start text-sm transition-all duration-300 ease-[var(--ease-out)]",
-                  picked === i ? "border-primary/60 bg-brand-softer shadow-[0_0_0_3px_color-mix(in_oklch,var(--primary)_14%,transparent)]" : "border-border hover:border-border-strong",
-                )}
-              >
-                <span className={cn("grid size-5 place-items-center rounded-full border-2 transition-colors", picked === i ? "border-primary bg-primary" : "border-control-border")}>
-                  {picked === i && <span className="size-1.5 rounded-full bg-primary-foreground" />}
-                </span>
-                {o}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="hidden border-s border-border bg-surface-sunken/60 p-5 sm:block">
-          <p className="text-xs font-medium text-muted-foreground">Questions</p>
-          <div className="mt-3 grid grid-cols-4 gap-1.5">
-            {states.slice(0, 6).map((s, i) => (
-              <span
-                key={i}
-                className={cn(
-                  "relative grid aspect-square place-items-center rounded-lg text-xs font-semibold",
-                  s === "done" && "bg-primary text-primary-foreground",
-                  s === "current" && "bg-surface text-foreground ring-2 ring-primary",
-                  s === "flag" && "bg-warning-soft text-warning",
-                  !s && "bg-surface text-muted-foreground ring-1 ring-border",
-                )}
-              >
-                {i + 1}
-                {s === "flag" && <Flag weight="fill" className="absolute -end-1 -top-1 size-3" />}
-              </span>
-            ))}
-          </div>
-          <dl className="mt-5 space-y-2 text-xs">
-            <div className="flex justify-between"><dt className="text-muted-foreground">Answered</dt><dd className="font-semibold tabular-nums">3</dd></div>
-            <div className="flex justify-between"><dt className="text-muted-foreground">For review</dt><dd className="font-semibold tabular-nums">1</dd></div>
-            <div className="flex justify-between"><dt className="text-muted-foreground">Unanswered</dt><dd className="font-semibold tabular-nums">2</dd></div>
-          </dl>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function HeroVisual() {
-  const reduce = useReducedMotion();
-  return (
-    <div className="relative mx-auto mt-16 max-w-5xl sm:mt-20">
-      <motion.div
-        initial={reduce ? false : { opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: EASE, delay: 0.2 }}
-      >
-        <WorkspacePreview />
-      </motion.div>
-    </div>
-  );
-}
-
-
 // ---- Photo band ------------------------------------------------------------------------------------------------
 
 const PHOTOS = [
@@ -164,7 +65,7 @@ function PhotoBand() {
                 alt={p.alt}
                 loading="lazy"
                 decoding="async"
-                className={cn("w-full object-cover", i === 1 ? "aspect-[4/5] md:mt-10" : "aspect-[4/5]")}
+                className={cn("w-full object-cover transition-transform duration-700 ease-[var(--ease-out)] group-hover:scale-[1.04]", i === 1 ? "aspect-[4/5] md:mt-10" : "aspect-[4/5]")}
               />
               <figcaption className="absolute inset-x-3 bottom-3 rounded-2xl border border-white/20 bg-black/35 p-4 text-white backdrop-blur-xl">
                 <b className="block text-[0.9375rem] font-semibold tracking-[-0.01em]">{p.title}</b>
@@ -545,14 +446,16 @@ export function HomePage() {
             </Button>
           </motion.div>
         </div>
-        <HeroVisual />
+        <HeroImagery />
       </section>
 
+      <EmblemMarquee />
       <PhotoBand />
       <Workflow />
       <Resilience />
       <Fairness />
       <Trust />
+      <FaqSection />
 
       <section className="px-4 pb-24 sm:px-6">
         <Reveal className="mx-auto max-w-6xl">

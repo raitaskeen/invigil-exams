@@ -7,6 +7,7 @@ import type { PaletteId } from "./palette";
 export const siteConfig = {
   productName: "Invigil",
   tagline: "Online exams that hold up under pressure.",
+  repoUrl: "https://github.com/raitaskeen/invigil-exams",
   brand: {
     palette: "cobalt" as PaletteId,
   },
@@ -35,6 +36,7 @@ export const siteConfig = {
         { label: "Resilience", href: "/#resilience" },
         { label: "Fairness", href: "/#fairness" },
         { label: "Architecture", href: "/architecture" },
+        { label: "FAQ", href: "/#faq" },
       ],
     },
     {
@@ -43,6 +45,15 @@ export const siteConfig = {
         { label: "Sign in", href: "/login" },
         { label: "Create a candidate account", href: "/register" },
         { label: "Verify a result", href: "/verify" },
+      ],
+    },
+    {
+      heading: "For candidates",
+      links: [
+        { label: "My exams", href: "/app/exams" },
+        { label: "Practice tests", href: "/app/practice" },
+        { label: "Past papers", href: "/app/papers" },
+        { label: "Results", href: "/app/results" },
       ],
     },
   ],

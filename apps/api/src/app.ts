@@ -17,6 +17,7 @@ import { authRoutes } from "./routes/auth";
 import { realtimeRoutes, wsRoutes } from "./routes/realtime";
 import { userRoutes } from "./routes/users";
 import { attemptRoutes, candidateRoutes, examRoutes, questionRoutes, verifyRoutes } from "./routes/exams";
+import { examRankingRoutes, feedbackRoutes, myRankRoutes, paperRoutes, practiceRoutes, resetAdminRoutes } from "./routes/platform";
 // GENERATOR:ROUTE_IMPORTS (bun run gen adds imports above this line - keep it)
 
 export const app = new Hono<AppEnv>();
@@ -49,6 +50,12 @@ app.route("/api/exams", examRoutes);
 app.route("/api/me", candidateRoutes);
 app.route("/api/attempts", attemptRoutes);
 app.route("/api/verify", verifyRoutes);
+app.route("/api/exams", examRankingRoutes);
+app.route("/api/attempts", myRankRoutes);
+app.route("/api/feedback", feedbackRoutes);
+app.route("/api/papers", paperRoutes);
+app.route("/api/practice", practiceRoutes);
+app.route("/api/password-resets", resetAdminRoutes);
 app.route("/ws", wsRoutes);
 // GENERATOR:ROUTES (bun run gen adds resource routes above this line - keep it)
 

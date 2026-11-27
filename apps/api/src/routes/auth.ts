@@ -1,6 +1,6 @@
 import { Hono, type Context } from "hono";
 import { deleteCookie, setCookie } from "hono/cookie";
-import { loginSchema, registerSchema } from "@np/shared";
+import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from "@np/shared";
 import type { AppEnv } from "../env";
 import { audit } from "../lib/audit";
 import { AppError } from "../lib/errors";
@@ -8,6 +8,7 @@ import { SESSION_COOKIE, SESSION_TTL_SECONDS, assertSecret, signSession } from "
 import { parseJson } from "../lib/validate";
 import { requireAuth } from "../middleware/auth";
 import { AuthService } from "../services/auth.service";
+import { PasswordResetService } from "../services/platform.service";
 import { UserService } from "../services/user.service";
 
 async function rateLimit(c: Context<AppEnv>, email: string) {
@@ -72,5 +73,21 @@ export const authRoutes = new Hono<AppEnv>()
     deleteCookie(c, SESSION_COOKIE, { path: "/", secure: secureCookie(c) });
     audit(c, "logout_all", "users", c.get("user")!.id);
     return c.body(null, 204);
+  })
+  /** Files a reset request for an administrator. Same answer whether or not the account exists. */
+  .post("/forgot-password", async (c) => {
+    const { email } = await parseJson(c, forgotPasswordSchema);
+    await rateLimit(c, `forgot:${email}`);
+    await new PasswordResetService(c.get("db")).request(email);
+    audit(c, "password_reset_requested", "users", null, null);
+    return c.json({ message: "If an account exists for that email, your request has reached the administrators. They will give you a one-time reset code." }, 202);
+  })
+  /** Sets a new password with an administrator-issued one-time code, then signs out every other session. */
+  .post("/reset-password", async (c) => {
+    const input = await parseJson(c, resetPasswordSchema);
+    await rateLimit(c, `reset:${input.email}`);
+    const { userId } = await new PasswordResetService(c.get("db")).reset(input.email, input.code, input.password);
+    audit(c, "password_reset", "users", userId, userId);
+    return c.json({ message: "Your password has been changed. Sign in with the new password." });
   })
   .get("/me", requireAuth, (c) => c.json({ user: c.get("user")! }));

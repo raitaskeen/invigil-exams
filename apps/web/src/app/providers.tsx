@@ -12,6 +12,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { NetworkStatus } from "@/components/feedback/NetworkStatus";
 import { ServiceWorker } from "@/components/ServiceWorker";
 import { Toaster } from "@/components/ui/sonner";
+import { HelpBot } from "@/features/help/HelpBot";
 
 const iconDefaults = { weight: "regular" as const, mirrored: false };
 
@@ -40,6 +41,7 @@ export function Providers({ children }: { children: ReactNode }) {
                 <AuthProvider>
                   {children}
                   <NetworkStatus />
+                  <HelpBot />
                   <Toaster position="bottom-right" />
                   <ServiceWorker />
                 </AuthProvider>

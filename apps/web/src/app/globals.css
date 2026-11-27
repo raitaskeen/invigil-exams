@@ -285,3 +285,54 @@
     animation: none;
   }
 }
+
+/* ---- Home: emblem marquee, FAQ accordion, floating help bot ---------------------------------------------- */
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee-track {
+  animation: marquee 38s linear infinite;
+}
+.marquee-mask:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.faq-item[open] .faq-body {
+  animation: rise 320ms var(--ease-out);
+}
+@keyframes bot-float {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+}
+@keyframes bot-blink {
+  0%, 92%, 100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+.bot-float {
+  animation: bot-float 3.6s ease-in-out infinite;
+}
+.bot-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bot-blink 4.2s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
+  }
+}

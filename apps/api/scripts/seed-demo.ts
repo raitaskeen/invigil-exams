@@ -167,6 +167,17 @@ const live: Attempt[] = [
   { id: 9104, exam: 502, cand: 6, status: "submitted", startedAt: NOW - 50 * MIN, paper: [1024, 1029, 1021, 1026, 1031, 1022], answers: { 1024: ["b"], 1029: ["b"], 1021: ["b"], 1026: ["a"], 1022: ["b"], 1031: "T1 and T2 both read the balance, each adds its change and writes back, so one write is lost. Locking the row with SELECT ... FOR UPDATE prevents it." } },
 ];
 
+// ---- Practice / mock test (sandboxed attempts only - never official) -------------------------------------------
+bank.push(
+  { id: 1061, owner: A, topic: "Algorithms", difficulty: "easy", type: "single", prompt: "What is the worst-case time complexity of binary search on a sorted array of n items?", options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"], correct: [1], marks: 2 },
+  { id: 1062, owner: A, topic: "Algorithms", difficulty: "easy", type: "single", prompt: "Which sorting algorithm is stable and always runs in O(n log n)?", options: ["Quicksort", "Heapsort", "Merge sort", "Selection sort"], correct: [2], marks: 2 },
+  { id: 1063, owner: A, topic: "Algorithms", difficulty: "medium", type: "multiple", prompt: "Which of these can be solved with a breadth-first search? (partial credit)", options: ["Shortest path in an unweighted graph", "Checking if a graph is bipartite", "Shortest path with negative weights", "Finding connected components"], correct: [0, 1, 3], marks: 3, scheme: "partial" },
+  { id: 1064, owner: A, topic: "Algorithms", difficulty: "medium", type: "single", prompt: "A hash table with a good hash function has which average lookup time?", options: ["O(1)", "O(log n)", "O(n)", "O(n^2)"], correct: [0], marks: 3 },
+  { id: 1065, owner: A, topic: "Algorithms", difficulty: "hard", type: "written", prompt: "Explain why dynamic programming is faster than plain recursion for computing Fibonacci numbers.", options: [], correct: [], marks: 5 },
+);
+const practicePool = [1061, 1062, 1063, 1064, 1065];
+exams.push({ id: 505, owner: A, title: "Practice · Algorithms Mock Test", instructions: "A practice test: take it as often as you like. Multiple-choice answers are marked instantly with a full review. The written question is not auto-graded. Practice attempts never count towards results or rankings.", startsAt: NOW - 2 * 24 * HOUR, endsAt: NOW + 60 * 24 * HOUR, duration: 20, total: 15, pass: 50, status: "published", pool: practicePool, enrol: [] });
+
 // ---- SQL -------------------------------------------------------------------------------------------------------
 const lines: string[] = [
   "DELETE FROM exams WHERE id BETWEEN 500 AND 599",
@@ -226,6 +237,33 @@ for (const a of [...ds, ...live]) {
 // A live announcement and an open dispute on the published midterm (innovation 5.4).
 lines.push(`INSERT INTO announcements (exam_id, message, created_by, at) VALUES (502, 'Reminder: in SQL, BETWEEN includes both ends of the range.', ${uid(A)}, ${q(iso(NOW - 12 * MIN))})`);
 lines.push(`INSERT INTO disputes (attempt_id, question_id, reason, status, score_before, created_at) VALUES (9002, 1007, 'I picked two of the three true statements and none of the false one, but all-or-nothing marking gave me 0 of 5. The question did not say in the prompt that it is all-or-nothing, so I think partial credit is fairer.', 'open', (SELECT score FROM attempts WHERE id = 9002), ${q(iso(NOW - 6 * HOUR))})`);
+lines.push("UPDATE exams SET is_practice = 1 WHERE id = 505");
+
+// Past papers (demo uploads by the examiners) and feedback from demo users.
+lines.push("DELETE FROM past_papers WHERE id BETWEEN 700 AND 799", "DELETE FROM feedback WHERE id BETWEEN 800 AND 899");
+const paperText = (title: string, qs: string[]) => btoa(`${title}\nDemo past paper for Invigil\n\n${qs.map((x, i) => `Q${i + 1}. ${x}`).join("\n\n")}\n`);
+const papers: [number, string, string, string, number, string, string, string[]][] = [
+  [701, A, "CS-201 Data Structures · Final", "Data Structures", 2025, "final", "Final examination, 3 hours. Sections on trees, graphs and hashing.", ["Insert 15, 10, 20, 8, 12 into an empty AVL tree and show every rotation.", "Compare open addressing and chaining for collision resolution.", "Prove that BFS finds shortest paths in unweighted graphs."]],
+  [702, A, "CS-201 Data Structures · Midterm", "Data Structures", 2024, "midterm", "Midterm examination, 90 minutes.", ["Implement a queue using two stacks and give the amortised cost.", "What is the height of a complete binary tree with n nodes?"]],
+  [703, A, "CS-301 Databases · Final", "Databases", 2025, "final", "Final examination covering normalisation, SQL and transactions.", ["Normalise the given relation to 3NF and justify each step.", "Write a SQL query for the second-highest salary per department.", "Explain the lost-update anomaly and how locking prevents it."]],
+  [704, A, "CS-301 Databases · Quiz 2", "Databases", 2024, "quiz", "Short quiz on joins and indexes.", ["When does a composite index help an ORDER BY?", "Difference between INNER and LEFT JOIN with an example."]],
+  [705, B, "SE-410 Web Security · Final", "Web Security", 2025, "final", "Final examination on the OWASP Top 10.", ["Explain CSRF and two defences against it.", "Why are httpOnly cookies safer than localStorage for sessions?", "Describe a stored XSS attack and how output encoding stops it."]],
+  [706, B, "CS-330 Computer Networks · Midterm", "Computer Networks", 2023, "midterm", "Midterm on addressing and the transport layer.", ["Subnet 192.168.10.0/24 into four equal subnets.", "Compare TCP and UDP with one use case each."]],
+];
+for (const [id, owner, title, subject, year, type, desc, qs] of papers) {
+  const content = paperText(title, qs);
+  lines.push(`INSERT INTO past_papers (id, uploaded_by, title, subject, year, exam_type, description, file_name, mime_type, size_bytes, content, created_at) VALUES (${id}, ${uid(owner)}, ${q(title)}, ${q(subject)}, ${year}, ${q(type)}, ${q(desc)}, ${q(`${subject.toLowerCase().replaceAll(" ", "-")}-${year}-${type}.txt`)}, 'text/plain', ${atob(content).length}, ${q(content)}, ${q(iso(NOW - (id - 700) * 24 * HOUR))})`);
+}
+const fb: [number, number, string, number, string, string][] = [
+  [801, 0, "exam_experience", 5, "The timer stayed correct after I refreshed the page during the midterm. Very reassuring.", "reviewed"],
+  [802, 1, "ui_ux", 4, "The question navigator is clear. It would help to see the flagged count on the submit screen too.", "new"],
+  [803, 2, "technical", 3, "My Wi-Fi dropped for a minute and the answers synced later, but the offline banner was easy to miss on my phone.", "new"],
+  [804, 3, "suggestion", 5, "Please add more practice tests for Databases before the final.", "resolved"],
+];
+for (const [id, cand, cat, rating, msg, status] of fb) {
+  lines.push(`INSERT INTO feedback (id, user_id, category, rating, message, status, created_at) VALUES (${id}, ${uid(candidates[cand]!.email)}, ${q(cat)}, ${rating}, ${q(msg)}, ${q(status)}, ${q(iso(NOW - (id - 800) * 5 * HOUR))})`);
+}
+
 
 const dir = mkdtempSync(join(tmpdir(), "np-demo-"));
 const file = join(dir, "demo.sql");

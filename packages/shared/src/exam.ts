@@ -78,6 +78,7 @@ export const examInputSchema = z
     drawMedium: optionalCount.default(null),
     drawHard: optionalCount.default(null),
     blockCopyPaste: z.boolean().default(true),
+    isPractice: z.boolean().default(false),
   })
   .superRefine((e, ctx) => {
     const start = Date.parse(e.startsAt);

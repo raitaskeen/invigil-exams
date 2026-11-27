@@ -4,3 +4,4 @@ export * from "./permissions";
 export * from "./realtime";
 export * from "./resources";
 export * from "./exam";
+export * from "./platform";

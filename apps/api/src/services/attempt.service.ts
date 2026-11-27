@@ -71,7 +71,7 @@ export class AttemptService {
       .from(enrollments)
       .innerJoin(exams, eq(exams.id, enrollments.examId))
       .leftJoin(attempts, and(eq(attempts.examId, exams.id), eq(attempts.candidateId, this.user.id), eq(attempts.isSandbox, false)))
-      .where(and(eq(enrollments.candidateId, this.user.id), sql`${exams.status} != 'draft'`))
+      .where(and(eq(enrollments.candidateId, this.user.id), sql`${exams.status} != 'draft'`, eq(exams.isPractice, false)))
       .orderBy(asc(exams.startsAt));
     return rows.map(({ exam, attempt }) => ({
       id: exam.id,
@@ -99,11 +99,22 @@ export class AttemptService {
 
   // ---- Start / resume ---------------------------------------------------------------------------------------------
 
-  async start(examId: number, sandbox = false): Promise<{ attemptId: number; resumed: boolean }> {
-    const exam = sandbox
+  async start(examId: number, sandbox = false, practice = false): Promise<{ attemptId: number; resumed: boolean }> {
+    const exam = sandbox && !practice
       ? await managedExam(this.db, this.user, examId)
       : await this.db.select().from(exams).where(eq(exams.id, examId)).get();
     if (!exam) throw AppError.notFound("Exam");
+    if (practice) {
+      // Practice / mock test: any candidate, any time, unlimited tries - always sandboxed, never official.
+      if (!this.user.permissions.includes("exams:take")) throw AppError.forbidden();
+      if (!exam.isPractice || exam.status === "draft") throw AppError.notFound("Practice test");
+      const open = await this.db.select().from(attempts).where(and(eq(attempts.examId, examId), eq(attempts.candidateId, this.user.id), eq(attempts.isSandbox, true), eq(attempts.status, "in_progress"))).get();
+      if (open) {
+        const fresh = await this.finalizeIfExpired(open);
+        if (fresh.status === "in_progress") return { attemptId: open.id, resumed: true };
+      }
+    }
+    if (!sandbox && exam.isPractice) throw AppError.badRequest("This is a practice test - start it from Practice.");
 
     if (!sandbox) {
       if (!this.user.permissions.includes("exams:take")) throw AppError.forbidden();

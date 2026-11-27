@@ -45,6 +45,8 @@ export const exams = sqliteTable(
     blockCopyPaste: integer({ mode: "boolean" }).notNull().default(true),
     resultsPublished: integer({ mode: "boolean" }).notNull().default(false),
     resultsPublishedAt: text(),
+    /** Practice/mock test: candidates may attempt it freely; attempts are sandboxed and never official. */
+    isPractice: integer({ mode: "boolean" }).notNull().default(false),
     ...timestamps,
   },
   (t) => [index("exams_owner_idx").on(t.ownerId), index("exams_window_idx").on(t.status, t.startsAt)],

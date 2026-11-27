@@ -49,7 +49,7 @@ function inline(text: string, onNavigate: () => void): ReactNode[] {
   return out;
 }
 
-function Markdown({ text, onNavigate }: { text: string; onNavigate: () => void }) {
+export function Markdown({ text, onNavigate }: { text: string; onNavigate: () => void }) {
   const blocks: ReactNode[] = [];
   const lines = text.split("\n");
   let list: { ordered: boolean; items: string[] } | null = null;

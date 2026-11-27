@@ -13,17 +13,25 @@ type AuthShellProps = {
   /** Below the form - usually "Already have an account? Log in". */
   footer: ReactNode;
   children: ReactNode;
+  /** Optional photo behind the form column, under a frosted overlay that keeps the form high-contrast. */
+  backdrop?: { src: string; alt: string };
 };
 
 /**
  * Sign-in/sign-up layout: a calm form column, and (from lg) a brand panel with what the product guarantees.
  * The form is the only thing on a phone - no scrolling past decoration to reach the fields.
  */
-export function AuthShell({ title, description, footer, children }: AuthShellProps) {
+export function AuthShell({ title, description, footer, children, backdrop }: AuthShellProps) {
   return (
     <div className="grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
-      <div className="flex flex-col px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-8 sm:px-10">
-        <header className="flex items-center justify-between">
+      <div className="relative isolate flex flex-col px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-8 sm:px-10">
+        {backdrop && (
+          <div className="absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
+            <img src={backdrop.src} alt="" decoding="async" className="size-full scale-105 object-cover animate-[fade-in_900ms_var(--ease-out)]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[oklch(0.15_0.03_260/0.78)] via-[oklch(0.15_0.03_260/0.62)] to-[oklch(0.12_0.03_260/0.85)] backdrop-blur-[3px]" />
+          </div>
+        )}
+        <header className={backdrop ? "flex items-center justify-between rounded-2xl border border-white/15 bg-background/85 px-3 py-1.5 backdrop-blur-xl" : "flex items-center justify-between"}>
           <Link href="/" className="rounded-md" aria-label={`${siteConfig.productName} home`}>
             <Logo />
           </Link>
@@ -39,14 +47,16 @@ export function AuthShell({ title, description, footer, children }: AuthShellPro
           </div>
         </header>
 
-        <main id="main" className="mx-auto flex w-full max-w-[25rem] flex-1 flex-col justify-center py-10 animate-rise">
+        <main id="main" className={backdrop ? "mx-auto flex w-full max-w-[27rem] flex-1 flex-col justify-center py-8 animate-rise" : "mx-auto flex w-full max-w-[25rem] flex-1 flex-col justify-center py-10 animate-rise"}>
+          <div className={backdrop ? "rounded-[1.5rem] border border-white/15 bg-background/90 p-6 shadow-2xl backdrop-blur-xl sm:p-8" : undefined}>
           <h1 className="text-[2rem] leading-tight font-semibold tracking-[-0.04em]">{title}</h1>
           <p className="mt-2 text-foreground-soft">{description}</p>
           <div className="mt-8">{children}</div>
           <p className="mt-8 text-center text-sm text-muted-foreground">{footer}</p>
+          </div>
         </main>
 
-        <p className="text-center text-xs text-muted-foreground">
+        <p className={backdrop ? "text-center text-xs text-white/75" : "text-center text-xs text-muted-foreground"}>
           Protected by secure sessions and rate-limited sign-in.
         </p>
       </div>
