@@ -14,6 +14,8 @@ import { siteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import { EmblemMarquee, FaqSection, HeroImagery } from "./HomeExtras";
 import { Showcase } from "./HomeShowcase";
+import { HomeHero } from "./HomeHero";
+import { BentoFeatures } from "./HomeBento";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -202,54 +204,13 @@ function Trust() {
 // ---- Page ---------------------------------------------------------------------------------------------------------
 
 export function HomePage() {
-  const { hero } = siteConfig;
-  const reduce = useReducedMotion();
-  const words = hero.headline.split(" ");
   return (
     <>
-      <section className="relative overflow-hidden px-4 pt-14 pb-28 sm:px-6 sm:pt-24 sm:pb-36">
-        <div className="mx-auto max-w-4xl text-center">
-          <h1 className="text-[clamp(2.75rem,7.6vw,5.75rem)] leading-[0.95] font-semibold tracking-[-0.055em] text-balance">
-            {words.map((w, i) => (
-              <motion.span
-                key={i}
-                className="inline-block"
-                initial={reduce ? false : { opacity: 0, y: "0.25em" }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: EASE, delay: i * 0.03 }}
-              >
-                {w}
-                {i < words.length - 1 && " "}
-              </motion.span>
-            ))}
-          </h1>
-          <motion.p
-            initial={reduce ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: EASE, delay: 0.45 }}
-            className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-pretty text-foreground-soft sm:text-xl"
-          >
-            {hero.description}
-          </motion.p>
-          <motion.div
-            initial={reduce ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: EASE, delay: 0.55 }}
-            className="mt-10 flex flex-col justify-center gap-3 sm:flex-row"
-          >
-            <Button size="lg" render={<Link href={hero.primary.href} />}>
-              {hero.primary.label} <ArrowRight className="rtl:rotate-180" />
-            </Button>
-            <Button size="lg" variant="outline" render={<Link href={hero.secondary.href} />}>
-              <SealCheck /> {hero.secondary.label}
-            </Button>
-          </motion.div>
-        </div>
-        <HeroImagery />
-      </section>
+      <HomeHero />
 
       <EmblemMarquee />
       <Showcase />
+      <BentoFeatures />
       <Workflow />
       <Trust />
       <FaqSection />

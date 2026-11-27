@@ -425,3 +425,38 @@
 .bot-header {
   background: linear-gradient(135deg, var(--primary), oklch(0.4 var(--brand-c) calc(var(--brand-h) + 20)));
 }
+
+/* ---- Home hero: grid texture, floating chips, entrance ------------------------------------------------- */
+.hero-grid {
+  background-image: linear-gradient(rgb(255 255 255 / 0.5) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.5) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at 70% 40%, #000 10%, transparent 70%);
+}
+.hero-rise {
+  animation: rise 800ms var(--ease-out) both;
+}
+.hero-card {
+  animation: hero-tilt 9s ease-in-out infinite;
+}
+@keyframes hero-tilt {
+  0%, 100% {
+    transform: perspective(1200px) rotateX(2deg) rotateY(-4deg) translateY(0);
+  }
+  50% {
+    transform: perspective(1200px) rotateX(1deg) rotateY(-2deg) translateY(-8px);
+  }
+}
+.hero-float-a {
+  animation: hero-float 6s ease-in-out infinite;
+}
+.hero-float-b {
+  animation: hero-float 7s ease-in-out infinite reverse;
+}
+@keyframes hero-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
