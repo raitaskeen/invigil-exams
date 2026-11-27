@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowLeft, CloudCheck, LockKey, SealCheck, Timer } from "@phosphor-icons/react";
+import { ArrowLeft } from "@phosphor-icons/react";
 import { Logo } from "@/components/brand/Logo";
 import { Preferences } from "@/components/layout/Preferences";
 import { siteConfig } from "@/lib/site-config";
@@ -19,12 +19,6 @@ type AuthShellProps = {
 
 const DEFAULT_BACKDROP = "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=2000&q=70";
 
-const PROMISES = [
-  { icon: Timer, t: "Server-kept time" },
-  { icon: CloudCheck, t: "Saves offline" },
-  { icon: LockKey, t: "Keys never sent" },
-  { icon: SealCheck, t: "Verifiable results" },
-];
 
 /**
  * Sign-in / sign-up: one centered card over a slowly drifting photo. The card is opaque enough to stay
@@ -33,7 +27,7 @@ const PROMISES = [
 export function AuthShell({ title, description, footer, children, backdrop }: AuthShellProps) {
   const src = backdrop?.src ?? DEFAULT_BACKDROP;
   return (
-    <div className="relative isolate flex min-h-dvh flex-col overflow-hidden bg-[oklch(0.16_0.03_var(--brand-h))] px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-6 sm:px-6">
+    <div className="relative isolate flex h-dvh flex-col overflow-hidden bg-[oklch(0.16_0.03_var(--brand-h))] px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-6 sm:px-6">
       <div className="absolute inset-0 -z-10" aria-hidden="true">
         <img src={src} alt="" decoding="async" fetchPriority="high" className="auth-kenburns size-full object-cover opacity-0 [animation-fill-mode:both]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.16_0.04_var(--brand-h)/0.45),oklch(0.12_0.03_var(--brand-h)/0.88)_75%)]" />
@@ -54,21 +48,14 @@ export function AuthShell({ title, description, footer, children, backdrop }: Au
         </div>
       </header>
 
-      <main id="main" className="flex flex-1 items-center justify-center py-8">
+      <main id="main" className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto py-3">
         <div className="w-full max-w-[28rem] animate-[rise_600ms_var(--ease-out)_backwards]">
-          <div className="rounded-[1.75rem] border border-white/20 bg-background/[0.93] p-6 shadow-[0_30px_80px_-20px_oklch(0.1_0.05_var(--brand-h)/0.7)] backdrop-blur-2xl sm:p-9">
+          <div className="rounded-[1.75rem] border border-white/20 bg-background/[0.93] p-6 shadow-[0_30px_80px_-20px_oklch(0.1_0.05_var(--brand-h)/0.7)] backdrop-blur-2xl sm:p-7">
             <h1 className="text-[1.875rem] leading-tight font-semibold tracking-[-0.04em]">{title}</h1>
             <p className="mt-1.5 text-foreground-soft">{description}</p>
-            <div className="mt-7">{children}</div>
-            <p className="mt-7 text-center text-sm text-muted-foreground">{footer}</p>
+            <div className="mt-5">{children}</div>
+            <p className="mt-5 text-center text-sm text-muted-foreground">{footer}</p>
           </div>
-          <ul className="mt-5 flex flex-wrap justify-center gap-2" aria-label="What Invigil guarantees">
-            {PROMISES.map((p, i) => (
-              <li key={p.t} className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-medium text-white/90 backdrop-blur-md animate-[rise_500ms_var(--ease-out)_backwards]" style={{ animationDelay: `${300 + i * 80}ms` }}>
-                <p.icon weight="duotone" className="size-3.5" aria-hidden="true" /> {p.t}
-              </li>
-            ))}
-          </ul>
         </div>
       </main>
 
