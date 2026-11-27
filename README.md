@@ -48,6 +48,17 @@ Re-centre the live exam before a demo: `cd apps/api && bun run demo:remote` (or 
 | 4.7 Customisable workspace | Text size, one-at-a-time or all-on-one-page, high contrast, light/dark - remembered on the device |
 | 4.8 Scratchpad | Notes (saved to the attempt) and a sketch canvas, never marked |
 
+### Beyond the brief
+
+| Feature | Where | How it stays safe |
+|---|---|---|
+| Rankings | Candidate result page shows *"You secured position #n out of N"*, percentile and an anonymous score distribution. Examiners get a sortable, filterable ranking table (CSV export) in the exam's Results tab | `GET /api/attempts/:id/rank` returns only the caller's own position plus per-band counts - no names or scores of others. `GET /api/exams/:id/rankings` requires `exams:manage` and exam ownership |
+| Practice tests | **Practice tests**: mock exams (an exam with *Practice test* ticked) taken any time, any number of times, with instant MCQ marking and answer review. Written answers are labelled for manual review and never auto-graded | Attempts are stored with `is_sandbox = 1`, so they are excluded from monitoring, grading, analytics, rankings, PDFs and official results by the same filters as the examiner sandbox |
+| Past papers | **Past papers**: browse by subject, year and type, view or download. Examiners/admins upload (PDF/PNG/JPEG/text up to 600 KB, or a link) | Stored in D1 (`past_papers`); upload/delete require `exams:manage` |
+| Feedback hub | **Feedback**: categorised feedback (UI/UX, technical, exam experience, suggestion) with a 1-5 rating and personal history; admins review, reply and resolve | Review endpoints require `users:manage` |
+| Password recovery | Sign in → **Forgot password?** files a request; an admin issues a one-time 8-character code on **People**; the user sets a new password with it | No email service needed. Codes are stored as SHA-256 hashes, expire in 30 minutes, allow 5 tries, are single-use, and a reset revokes every session |
+| Help bot | Floating assistant (bottom-right, hidden in the exam workspace) with role-aware answers for visitors, candidates, examiners and admins | Answers come from a built-in platform guide (`apps/api/src/services/help.service.ts`), so it works with no API key. If `GROQ_API_KEY` is set on the server, the model is grounded in the same guide; the key never reaches the browser |
+
 ## Innovation challenges
 
 **5.3 Failure-resilient examinations (primary).** The server owns the clock: the deadline is `min(start + duration, window end)`, and the browser only renders it using a measured offset, so changing the device clock does nothing. Every answer goes into a per-attempt queue in `localStorage` *before* the network is tried; the queue keeps the latest change per question, replays in order, retries with backoff and flushes the moment the browser is back online. A crash or refresh restores the queue. The server accepts a save only while the attempt is open and `now ≤ deadline + 5 s` (in-flight grace), and finalises an expired attempt with exactly what it accepted. A heartbeat every 15 s re-syncs the clock, feeds the examiner's online indicator and detects a second open session. Lost time is only ever compensated by an examiner, per attempt, with a recorded reason. Code: `apps/web/src/features/workspace/useSaveQueue.ts`, `apps/api/src/services/attempt.service.ts`.
