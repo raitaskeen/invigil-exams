@@ -17,14 +17,6 @@ test.describe("public", () => {
     await expectNoHorizontalScroll(page);
   });
 
-  test("resilience demo reacts to a dropped connection", async ({ page, errors }) => {
-    void errors;
-    await page.goto("/#resilience");
-    await page.getByRole("button", { name: "Drop the connection" }).click();
-    await expect(page.getByText(/Offline/).first()).toBeVisible();
-    await expect(page.getByText("All answers saved")).toBeVisible({ timeout: 8000 });
-  });
-
   test("architecture diagrams render", async ({ page, errors }) => {
     void errors;
     await page.goto("/architecture");

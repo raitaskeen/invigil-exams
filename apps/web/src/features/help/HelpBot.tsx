@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { ArrowUp, ArrowsClockwise, X } from "@phosphor-icons/react";
+import { ArrowUp, ArrowsClockwise, Sparkle, X } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Markdown } from "@/features/app/Assistant";
@@ -18,67 +18,17 @@ interface Msg {
 }
 
 /**
- * "Invi": a glossy, layered 3D-style robot head. Pure SVG (no image requests): rim-lit shell, glass visor with
- * reflections, glowing eyes that blink, an antenna beacon, and a soft contact shadow. Float + blink via CSS.
+ * Invi's mark: a small aurora orb in the brand colours (a slowly turning conic gradient, softened, under a glass
+ * highlight) with a crisp sparkle on top. Abstract on purpose - it reads as "assistant" without a mascot.
  */
-export function BotFace({ className, animated = true }: { className?: string; animated?: boolean }) {
+export function InviOrb({ className, still = false }: { className?: string; still?: boolean }) {
   return (
-    <svg viewBox="5 1 86 94" className={cn(animated && "bot-float", className)} aria-hidden="true">
-      <defs>
-        <radialGradient id="invi-shell" cx="34%" cy="26%" r="85%">
-          <stop offset="0" stopColor="#ffffff" />
-          <stop offset=".38" style={{ stopColor: "oklch(0.97 calc(var(--brand-c) * 0.12) var(--brand-h))" }} />
-          <stop offset=".78" style={{ stopColor: "oklch(0.86 calc(var(--brand-c) * 0.45) var(--brand-h))" }} />
-          <stop offset="1" style={{ stopColor: "oklch(0.66 calc(var(--brand-c) * 0.85) var(--brand-h))" }} />
-        </radialGradient>
-        <linearGradient id="invi-rim" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#ffffff" stopOpacity=".95" />
-          <stop offset=".5" style={{ stopColor: "oklch(0.8 calc(var(--brand-c) * 0.6) var(--brand-h))" }} stopOpacity=".2" />
-          <stop offset="1" style={{ stopColor: "oklch(0.55 var(--brand-c) var(--brand-h))" }} stopOpacity=".9" />
-        </linearGradient>
-        <linearGradient id="invi-visor" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" style={{ stopColor: "oklch(0.3 calc(var(--brand-c) * 0.7) var(--brand-h))" }} />
-          <stop offset=".55" style={{ stopColor: "oklch(0.18 calc(var(--brand-c) * 0.5) var(--brand-h))" }} />
-          <stop offset="1" style={{ stopColor: "oklch(0.13 calc(var(--brand-c) * 0.4) var(--brand-h))" }} />
-        </linearGradient>
-        <radialGradient id="invi-eye" cx="50%" cy="40%" r="60%">
-          <stop offset="0" style={{ stopColor: "oklch(0.99 0.02 var(--brand-h))" }} />
-          <stop offset=".45" style={{ stopColor: "oklch(0.86 calc(var(--brand-c) * 0.7) calc(var(--brand-h) - 40))" }} />
-          <stop offset="1" style={{ stopColor: "oklch(0.68 var(--brand-c) calc(var(--brand-h) - 30))" }} />
-        </radialGradient>
-        <radialGradient id="invi-beacon" cx="40%" cy="35%" r="65%">
-          <stop offset="0" style={{ stopColor: "oklch(0.98 0.02 var(--brand-h))" }} />
-          <stop offset=".5" style={{ stopColor: "oklch(0.78 calc(var(--brand-c) * 0.8) var(--brand-h))" }} />
-          <stop offset="1" style={{ stopColor: "oklch(0.52 var(--brand-c) var(--brand-h))" }} />
-        </radialGradient>
-        <linearGradient id="invi-ear" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" style={{ stopColor: "oklch(0.88 calc(var(--brand-c) * 0.4) var(--brand-h))" }} />
-          <stop offset="1" style={{ stopColor: "oklch(0.55 var(--brand-c) var(--brand-h))" }} />
-        </linearGradient>
-        <filter id="invi-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="2.2" result="b" />
-          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-      </defs>
-      <ellipse cx="48" cy="89" rx="22" ry="3.4" style={{ fill: "oklch(0.25 0.05 var(--brand-h))" }} opacity=".22" />
-      <path d="M48 20v-8" stroke="url(#invi-ear)" strokeWidth="3" strokeLinecap="round" />
-      <circle className="bot-beacon" cx="48" cy="9" r="5" fill="url(#invi-beacon)" filter="url(#invi-glow)" />
-      <rect x="8" y="40" width="10" height="22" rx="5" fill="url(#invi-ear)" />
-      <rect x="78" y="40" width="10" height="22" rx="5" fill="url(#invi-ear)" />
-      <rect x="14" y="20" width="68" height="62" rx="26" fill="url(#invi-shell)" />
-      <rect x="14.75" y="20.75" width="66.5" height="60.5" rx="25.3" fill="none" stroke="url(#invi-rim)" strokeWidth="1.5" />
-      <rect x="22" y="32" width="52" height="34" rx="17" fill="url(#invi-visor)" />
-      <rect x="22.5" y="32.5" width="51" height="33" rx="16.5" fill="none" style={{ stroke: "oklch(0.7 calc(var(--brand-c) * 0.8) var(--brand-h))" }} strokeOpacity=".55" />
-      <g filter="url(#invi-glow)">
-        <rect className="bot-eye" x="33" y="41" width="9" height="12" rx="4.5" fill="url(#invi-eye)" />
-        <rect className="bot-eye" x="54" y="41" width="9" height="12" rx="4.5" fill="url(#invi-eye)" />
-      </g>
-      <path d="M40.5 58.5q7.5 4 15 0" fill="none" style={{ stroke: "oklch(0.86 calc(var(--brand-c) * 0.7) calc(var(--brand-h) - 40))" }} strokeWidth="2.4" strokeLinecap="round" opacity=".9" />
-      <path d="M27 37c4-3 10-4.5 16-4.5" fill="none" stroke="#fff" strokeOpacity=".35" strokeWidth="2.5" strokeLinecap="round" />
-      <ellipse cx="33" cy="26.5" rx="11" ry="3.6" fill="#fff" opacity=".85" />
-      <circle cx="25" cy="70" r="3" style={{ fill: "oklch(0.85 calc(var(--brand-c) * 0.5) calc(var(--brand-h) + 60))" }} opacity=".45" />
-      <circle cx="71" cy="70" r="3" style={{ fill: "oklch(0.85 calc(var(--brand-c) * 0.5) calc(var(--brand-h) + 60))" }} opacity=".45" />
-    </svg>
+    <span className={cn("relative isolate grid place-items-center overflow-hidden rounded-full bg-[oklch(0.16_0.04_var(--brand-h))]", className)} aria-hidden="true">
+      <span className={cn("invi-aurora absolute -inset-1 rounded-full", still && "[animation:none]")} />
+      <span className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_32%_26%,rgb(255_255_255/0.55),transparent_42%)]" />
+      <span className="absolute inset-0 rounded-full shadow-[inset_0_0_0_1px_rgb(255_255_255/0.25),inset_0_-8px_16px_oklch(0.2_0.08_var(--brand-h)/0.55)]" />
+      <Sparkle weight="fill" className="relative size-[42%] text-white drop-shadow-[0_1px_4px_rgb(0_0_0/0.35)]" />
+    </span>
   );
 }
 
@@ -158,7 +108,7 @@ export function HelpBot() {
           >
             <header className="flex items-center gap-3 bot-header px-4 py-3 text-primary-foreground">
               <span className="grid size-11 place-items-center rounded-2xl bg-white/90 shadow-inner">
-                <BotFace className="size-9" animated={false} />
+                <InviOrb className="size-9" still />
               </span>
               <div className="min-w-0 flex-1">
                 <h2 className="text-[0.9375rem] leading-tight font-semibold">Invi · Help</h2>
@@ -246,12 +196,16 @@ export function HelpBot() {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label={open ? "Close help" : "Open help chat"}
-        className="bot-launcher group fixed end-4 bottom-4 z-40 grid size-[4.25rem] place-items-center rounded-full transition-transform duration-300 ease-[var(--ease-out)] hover:scale-[1.06] active:scale-95 sm:end-6 sm:bottom-6"
+        className="invi-launcher group fixed end-4 bottom-4 z-40 flex h-14 items-center gap-0 rounded-full border border-white/10 bg-[oklch(0.17_0.03_var(--brand-h)/0.92)] p-1.5 text-white shadow-[0_18px_40px_-12px_oklch(0.25_0.12_var(--brand-h)/0.7)] backdrop-blur-xl transition-[gap,padding,transform] duration-300 ease-[var(--ease-out)] hover:gap-2.5 hover:pe-4 focus-visible:gap-2.5 focus-visible:pe-4 active:scale-95 sm:end-6 sm:bottom-6"
       >
-        <span className="bot-ring absolute inset-0 rounded-full" aria-hidden="true" />
-        <span className="absolute inset-[3px] rounded-full bot-core" aria-hidden="true" />
-        {open ? <X weight="bold" className="relative size-6 text-primary" /> : <BotFace className="relative size-[3.4rem]" />}
-        {!open && <span className="absolute end-0.5 top-0.5 flex size-3.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-success/60" /><span className="relative inline-flex size-3.5 rounded-full bg-success ring-2 ring-background" /></span>}
+        {open ? (
+          <span className="grid size-11 place-items-center rounded-full bg-white/10"><X weight="bold" className="size-5" aria-hidden="true" /></span>
+        ) : (
+          <InviOrb className="size-11" />
+        )}
+        <span className="max-w-0 overflow-hidden text-sm font-semibold whitespace-nowrap opacity-0 transition-[max-width,opacity] duration-300 group-hover:max-w-24 group-hover:opacity-100 group-focus-visible:max-w-24 group-focus-visible:opacity-100">
+          {open ? "Close" : "Ask Invi"}
+        </span>
       </button>
     </>
   );

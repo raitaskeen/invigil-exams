@@ -19,6 +19,8 @@ interface Tile {
 
 const bar = (w: string, cls = "bg-primary") => <span className={cn("block h-2 rounded-full", cls)} style={{ width: w }} />;
 
+const TINTS = ["oklch(0.55 0.19 258)", "oklch(0.6 0.18 290)", "oklch(0.6 0.14 200)", "oklch(0.6 0.15 155)", "oklch(0.64 0.16 60)", "oklch(0.6 0.19 20)", "oklch(0.58 0.17 320)", "oklch(0.6 0.15 235)"];
+
 const TILES: Tile[] = [
   {
     icon: WifiSlash,
@@ -88,8 +90,7 @@ export function BentoFeatures() {
     <section id="features" aria-labelledby="features-title" className="scroll-mt-24 px-4 py-20 sm:px-6 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold text-primary">Everything an exam needs</p>
-          <h2 id="features-title" className="mt-3 text-[clamp(2rem,4.2vw,3.1rem)] leading-[1.02] font-semibold tracking-[-0.045em] text-balance">
+          <h2 id="features-title" className="text-[clamp(2rem,4.2vw,3.1rem)] leading-[1.02] font-semibold tracking-[-0.045em] text-balance">
             Built for the whole exam, not just the questions.
           </h2>
         </div>
@@ -106,8 +107,8 @@ export function BentoFeatures() {
                 t.className,
               )}
             >
-              <span className="pointer-events-none absolute -top-16 -right-16 size-40 rounded-full bg-primary/10 opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true" />
-              <span className="grid size-11 place-items-center rounded-2xl bg-brand-soft text-brand-ink transition-transform duration-300 group-hover:scale-110">
+              <span className="pointer-events-none absolute -top-16 -right-16 size-40 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-60" style={{ background: TINTS[i % TINTS.length] }} aria-hidden="true" />
+              <span className="grid size-11 place-items-center rounded-2xl text-white shadow-md transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-6deg]" style={{ background: `linear-gradient(135deg, ${TINTS[i % TINTS.length]}, color-mix(in oklch, ${TINTS[i % TINTS.length]} 60%, black))` }}>
                 <t.icon weight="duotone" className="size-6" aria-hidden="true" />
               </span>
               <h3 className="mt-5 text-lg font-semibold tracking-[-0.02em]">{t.title}</h3>

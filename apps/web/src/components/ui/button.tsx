@@ -11,16 +11,16 @@ import { cn } from "@/lib/utils"
  * hover and press.
  */
 const buttonVariants = cva(
-  "group/button relative inline-flex shrink-0 items-center justify-center gap-2 rounded-[var(--radius-control)] border border-transparent bg-clip-padding text-sm font-medium tracking-[-0.005em] whitespace-nowrap outline-none select-none transition-[background-color,border-color,color,box-shadow,transform] duration-150 ease-[var(--ease-out)] focus-visible:ring-[3px] focus-visible:ring-ring/35 active:not-aria-[haspopup]:scale-[0.97] active:not-aria-[haspopup]:duration-75 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-[1.125rem]",
+  "group/button relative inline-flex shrink-0 items-center justify-center gap-2 rounded-[var(--radius-control)] border border-transparent bg-clip-padding text-sm font-medium tracking-[-0.005em] whitespace-nowrap outline-none select-none liquid-btn transition-[background-color,border-color,color,box-shadow,transform] duration-300 ease-[var(--ease-out)] focus-visible:ring-[3px] focus-visible:ring-ring/35 active:not-aria-[haspopup]:scale-[0.97] active:not-aria-[haspopup]:duration-75 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-[1.125rem]",
   {
     variants: {
       variant: {
         default:
-          "border-[oklch(0.3_var(--brand-c)_var(--brand-h)/0.35)] bg-[linear-gradient(180deg,oklch(from_var(--primary)_calc(l+0.06)_c_h),var(--primary))] text-primary-foreground shadow-brand hover:bg-[linear-gradient(180deg,oklch(from_var(--primary-hover)_calc(l+0.05)_c_h),var(--primary-hover))] before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:shadow-[inset_0_1px_0_oklch(1_0_0/0.28)]",
+          "border-[oklch(0.3_var(--brand-c)_var(--brand-h)/0.35)] bg-[linear-gradient(180deg,oklch(from_var(--primary)_calc(l+0.06)_c_h),var(--primary))] text-primary-foreground shadow-brand hover:bg-[linear-gradient(180deg,oklch(from_var(--primary-hover)_calc(l+0.05)_c_h),var(--primary-hover))] before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:shadow-[inset_0_1px_0_oklch(1_0_0/0.28)] liquid-primary hover:-translate-y-px hover:shadow-[0_10px_28px_-8px_oklch(0.5_var(--brand-c)_var(--brand-h)/0.65)]",
         outline:
-          "border-[var(--glass-border)] bg-[var(--glass)] text-foreground shadow-[var(--glass-edge),var(--glass-shadow)] backdrop-blur-xl backdrop-saturate-150 hover:bg-[var(--glass-strong)] aria-expanded:bg-[var(--glass-strong)]",
+          "border-[var(--glass-border)] bg-[var(--glass)] text-foreground shadow-[var(--glass-edge),var(--glass-shadow)] backdrop-blur-xl backdrop-saturate-150 hover:bg-[var(--glass-strong)] aria-expanded:bg-[var(--glass-strong)] liquid-glass hover:-translate-y-px",
         glass:
-          "border-[var(--glass-border)] bg-[var(--glass)] text-foreground shadow-[var(--glass-edge),var(--glass-shadow)] backdrop-blur-xl backdrop-saturate-150 hover:bg-[var(--glass-strong)]",
+          "border-[var(--glass-border)] bg-[var(--glass)] text-foreground shadow-[var(--glass-edge),var(--glass-shadow)] backdrop-blur-xl backdrop-saturate-150 hover:bg-[var(--glass-strong)] liquid-glass hover:-translate-y-px",
         secondary: "bg-brand-soft text-brand-ink hover:bg-[color-mix(in_oklch,var(--brand-soft),var(--foreground)_6%)]",
         ghost: "text-foreground-soft hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-[color-mix(in_oklch,var(--destructive),black_10%)]",
@@ -30,7 +30,7 @@ const buttonVariants = cva(
       size: {
         default: "h-11 px-4 pointer-fine:h-9 pointer-fine:px-3.5",
         sm: "h-10 gap-1.5 px-3 text-[0.8125rem] pointer-fine:h-8 pointer-fine:px-2.5 [&_svg:not([class*='size-'])]:size-4",
-        lg: "h-12 px-5 text-[0.9375rem] pointer-fine:h-11",
+        lg: "h-12 rounded-full px-6 text-[0.9375rem] pointer-fine:h-11",
         xs: "h-8 gap-1 rounded-md px-2 text-xs pointer-fine:h-7 [&_svg:not([class*='size-'])]:size-3.5",
         icon: "size-11 pointer-fine:size-9",
         "icon-sm": "size-10 pointer-fine:size-8 [&_svg:not([class*='size-'])]:size-4",

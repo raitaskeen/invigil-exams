@@ -10,7 +10,7 @@ import { motion, useReducedMotion } from "motion/react";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-function Figure({ title, body, children, files }: { title: string; body: ReactNode; children: ReactNode; files: string[] }) {
+function Figure({ title, body, children, files, n, hue }: { title: string; body: ReactNode; children: ReactNode; files: string[]; n: number; hue: Hue }) {
   const reduce = useReducedMotion();
   return (
     <motion.section
@@ -18,9 +18,13 @@ function Figure({ title, body, children, files }: { title: string; body: ReactNo
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.6, ease: EASE }}
-      className="rounded-[1.5rem] border border-border bg-card p-6 shadow-xs sm:p-8"
+      className="relative overflow-hidden rounded-[1.5rem] border border-border bg-card p-6 shadow-xs sm:p-8"
+      style={{ boxShadow: `inset 0 4px 0 ${HUE[hue]}` }}
     >
-      <h2 className="text-2xl font-semibold tracking-[-0.03em]">{title}</h2>
+      <div className="flex items-center gap-3">
+        <span className="grid size-9 shrink-0 place-items-center rounded-xl text-sm font-bold text-white" style={{ background: HUE[hue] }}>{n}</span>
+        <h2 className="text-2xl font-semibold tracking-[-0.03em]">{title}</h2>
+      </div>
       <p className="mt-2 max-w-3xl leading-relaxed text-foreground-soft">{body}</p>
       <div className="mt-6 overflow-x-auto">{children}</div>
       <p className="mt-5 flex flex-wrap gap-x-3 gap-y-1.5 text-xs text-muted-foreground">
@@ -36,7 +40,31 @@ function Figure({ title, body, children, files }: { title: string; body: ReactNo
 const T = { fill: "var(--foreground)", fontFamily: "var(--font-sans)" } as const;
 const M = { fill: "var(--muted-foreground)", fontFamily: "var(--font-sans)" } as const;
 
-function Box({ x, y, w, h, title, lines = [], tone = "plain" }: { x: number; y: number; w: number; h: number; title: string; lines?: string[]; tone?: "plain" | "brand" | "soft" | "dashed" }) {
+const HUE = {
+  people: "oklch(0.66 0.13 210)",
+  edge: "var(--primary)",
+  api: "oklch(0.6 0.18 290)",
+  data: "oklch(0.62 0.15 155)",
+  time: "oklch(0.74 0.15 75)",
+  guard: "oklch(0.63 0.19 20)",
+} as const;
+type Hue = keyof typeof HUE;
+
+function Box({ x, y, w, h, title, lines = [], tone = "plain", hue }: { x: number; y: number; w: number; h: number; title: string; lines?: string[]; tone?: "plain" | "brand" | "soft" | "dashed"; hue?: Hue }) {
+  if (hue) {
+    const c = HUE[hue];
+    return (
+      <g>
+        <rect x={x} y={y} width={w} height={h} rx={14} fill={`color-mix(in oklch, ${c} 13%, var(--surface))`} stroke={`color-mix(in oklch, ${c} 60%, transparent)`} strokeWidth={1.4} />
+        <rect x={x} y={y + 14} width={4} height={h - 28} rx={2} fill={c} />
+        <circle cx={x + w - 18} cy={y + 22} r={5} fill={c} />
+        <text x={x + 16} y={y + 28} fontSize={14} fontWeight={600} {...T}>{title}</text>
+        {lines.map((l, i) => (
+          <text key={i} x={x + 16} y={y + 50 + i * 19} fontSize={12} {...M}>{l}</text>
+        ))}
+      </g>
+    );
+  }
   return (
     <g>
       <rect
@@ -85,19 +113,19 @@ function SystemDiagram() {
   return (
     <svg viewBox="0 -24 980 454" className="min-w-[760px]" role="img" aria-label="System architecture: browsers talk to one Cloudflare Worker that serves the static site, the Hono API and WebSockets; the API uses D1 and a Durable Object.">
       <Defs />
-      <Box x={10} y={30} w={190} h={110} title="Candidate" lines={["Exam workspace", "offline save queue", "server-synced timer"]} />
-      <Box x={10} y={160} w={190} h={110} title="Examiner" lines={["Bank, builder, monitor", "grading, analytics"]} />
-      <Box x={10} y={290} w={190} h={110} title="Administrator" lines={["People and roles", "every exam"]} />
+      <Box x={10} y={30} w={190} h={110} title="Candidate" lines={["Exam workspace", "offline save queue", "server-synced timer"]} hue="people" />
+      <Box x={10} y={160} w={190} h={110} title="Examiner" lines={["Bank, builder, monitor", "grading, analytics"]} hue="people" />
+      <Box x={10} y={290} w={190} h={110} title="Administrator" lines={["People and roles", "every exam"]} hue="people" />
 
       <rect x={270} y={14} width={470} height={402} rx={20} fill="var(--surface-sunken)" stroke="color-mix(in oklch, var(--primary) 40%, transparent)" />
       <text x={290} y={42} fontSize={13} fontWeight={600} fill="var(--brand-ink)" fontFamily="var(--font-sans)">One Cloudflare Worker · one origin</text>
-      <Box x={290} y={60} w={200} h={92} title="Static site" lines={["Next.js export (Workers", "Assets) + security headers"]} />
-      <Box x={510} y={60} w={210} h={92} title="WebSocket rooms" lines={["Durable Object per topic", "exam-N, exam-N-live, attempt-N"]} tone="brand" />
-      <Box x={290} y={172} w={430} h={110} title="Hono API  /api/*" lines={["requestId → secureHeaders → CORS/CSRF → body limit → session cookie", "→ requirePermission(role) → Zod (shared) → Service → audit log", "Services: Question · Exam · Attempt · Report (pdf-lib + QR)"]} tone="brand" />
-      <Box x={290} y={302} w={200} h={96} title="Server clock" lines={["deadline = min(start +", "duration, window end)"]} />
-      <Box x={510} y={302} w={210} h={96} title="Rate limits" lines={["sign-in, verification", "per IP + email"]} />
+      <Box x={290} y={60} w={200} h={92} title="Static site" lines={["Next.js export (Workers", "Assets) + security headers"]} hue="edge" />
+      <Box x={510} y={60} w={210} h={92} title="WebSocket rooms" lines={["Durable Object per topic", "exam-N, exam-N-live, attempt-N"]} hue="edge" />
+      <Box x={290} y={172} w={430} h={110} title="Hono API  /api/*" lines={["requestId → secureHeaders → CORS/CSRF → body limit → session cookie", "→ requirePermission(role) → Zod (shared) → Service → audit log", "Services: Question · Exam · Attempt · Report (pdf-lib + QR)"]} hue="api" />
+      <Box x={290} y={302} w={200} h={96} title="Server clock" lines={["deadline = min(start +", "duration, window end)"]} hue="time" />
+      <Box x={510} y={302} w={210} h={96} title="Rate limits" lines={["sign-in, verification", "per IP + email"]} hue="guard" />
 
-      <Box x={800} y={150} w={170} h={130} title="D1 (SQLite)" lines={["Drizzle schema", "FKs, unique keys", "snapshot papers", "audit_log"]} />
+      <Box x={800} y={150} w={170} h={130} title="D1 (SQLite)" lines={["Drizzle schema", "FKs, unique keys", "snapshot papers", "audit_log"]} hue="data" />
 
       <Arrow d="M200 85 C 240 85, 245 106, 286 106" label="HTML, JS" lx={243} ly={78} />
       <Arrow d="M200 215 C 240 215, 250 227, 286 227" label="/api" lx={236} ly={208} />
@@ -198,6 +226,35 @@ function ErdDiagram() {
   );
 }
 
+const STEPS = [
+  { n: 1, hue: "people", title: "You open Invigil", body: "Candidates, examiners and admins use the same site in any browser - no installs." },
+  { n: 2, hue: "edge", title: "One Cloudflare Worker answers", body: "It serves the pages, the API and live updates from one address close to you." },
+  { n: 3, hue: "api", title: "Every request is checked", body: "Who you are, what your role allows and whether the data is valid - on the server." },
+  { n: 4, hue: "data", title: "Saved in the database", body: "D1 keeps exams, attempts and results with rules that stop bad data getting in." },
+] as const;
+
+function AtAGlance() {
+  return (
+    <section aria-labelledby="glance-title" className="mt-12">
+      <h2 id="glance-title" className="text-sm font-semibold text-primary">In plain words</h2>
+      <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {STEPS.map((s) => (
+          <li key={s.n} className="relative overflow-hidden rounded-[1.25rem] border p-5 shadow-xs" style={{ borderColor: `color-mix(in oklch, ${HUE[s.hue]} 45%, transparent)`, background: `color-mix(in oklch, ${HUE[s.hue]} 10%, var(--card))` }}>
+            <span className="grid size-9 place-items-center rounded-full text-sm font-bold text-white" style={{ background: HUE[s.hue] }}>{s.n}</span>
+            <h3 className="mt-3 font-semibold">{s.title}</h3>
+            <p className="mt-1 text-sm leading-relaxed text-foreground-soft">{s.body}</p>
+          </li>
+        ))}
+      </ol>
+      <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground" aria-label="Diagram colour key">
+        {([["people", "People"], ["edge", "Edge (Worker)"], ["api", "API and rules"], ["data", "Database"], ["time", "Time"], ["guard", "Protection"]] as const).map(([k, l]) => (
+          <li key={k} className="flex items-center gap-1.5"><span className="size-2.5 rounded-full" style={{ background: HUE[k] }} /> {l}</li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export function ArchitecturePage() {
   return (
     <div className="px-4 py-16 sm:px-6 sm:py-24">
@@ -206,17 +263,18 @@ export function ArchitecturePage() {
         <p className="mt-4 max-w-2xl text-lg leading-relaxed text-foreground-soft">
           Four diagrams that map the design onto the code. TypeScript end to end, one shared set of validation rules, and one deployment that serves the site, the API and live updates from the same origin.
         </p>
+        <AtAGlance />
         <div className="mt-12 space-y-6">
-          <Figure title="System" body="Browsers only ever talk to one origin, so the session is a first-party httpOnly cookie and there is no cross-site surface. Every API request passes the same middleware chain before a service touches the database." files={["apps/api/src/app.ts", "apps/api/src/routes/exams.ts", "apps/api/src/services/*", "apps/api/src/realtime/*", "apps/api/wrangler.jsonc"]}>
+          <Figure n={1} hue="edge" title="System" body="Browsers only ever talk to one origin, so the session is a first-party httpOnly cookie and there is no cross-site surface. Every API request passes the same middleware chain before a service touches the database." files={["apps/api/src/app.ts", "apps/api/src/routes/exams.ts", "apps/api/src/services/*", "apps/api/src/realtime/*", "apps/api/wrangler.jsonc"]}>
             <SystemDiagram />
           </Figure>
-          <Figure title="Exam lifecycle" body="Draft, published and completed are stored; whether an exam is upcoming or ongoing is derived from its window on every request, so a scheduler can never forget to flip it." files={["packages/shared/src/exam.ts · examPhase()", "apps/api/src/services/exam.service.ts · paperProblems()"]}>
+          <Figure n={2} hue="api" title="Exam lifecycle" body="Draft, published and completed are stored; whether an exam is upcoming or ongoing is derived from its window on every request, so a scheduler can never forget to flip it." files={["packages/shared/src/exam.ts · examPhase()", "apps/api/src/services/exam.service.ts · paperProblems()"]}>
             <LifecycleDiagram />
           </Figure>
-          <Figure title="Failure-resilient answers (innovation 5.3)" body="An answer is written to the device before the network is tried. The server alone decides whether it arrived in time, so a bad connection costs nobody marks and gains nobody time." files={["apps/web/src/features/workspace/useSaveQueue.ts", "apps/api/src/services/attempt.service.ts · save(), heartbeat(), finalizeIfExpired()"]}>
+          <Figure n={3} hue="time" title="Failure-resilient answers (innovation 5.3)" body="An answer is written to the device before the network is tried. The server alone decides whether it arrived in time, so a bad connection costs nobody marks and gains nobody time." files={["apps/web/src/features/workspace/useSaveQueue.ts", "apps/api/src/services/attempt.service.ts · save(), heartbeat(), finalizeIfExpired()"]}>
             <SyncDiagram />
           </Figure>
-          <Figure title="Data model" body="Integrity rules live in the database, not just in code: one attempt per candidate per exam, one answer per question, questions in use can't be deleted, and each attempt keeps a snapshot of its paper and answer key." files={["apps/api/src/db/schema/exam.ts", "apps/api/src/db/schema/core.ts", "apps/api/migrations/0000_init.sql"]}>
+          <Figure n={4} hue="data" title="Data model" body="Integrity rules live in the database, not just in code: one attempt per candidate per exam, one answer per question, questions in use can't be deleted, and each attempt keeps a snapshot of its paper and answer key." files={["apps/api/src/db/schema/exam.ts", "apps/api/src/db/schema/core.ts", "apps/api/migrations/0000_init.sql"]}>
             <ErdDiagram />
           </Figure>
         </div>
